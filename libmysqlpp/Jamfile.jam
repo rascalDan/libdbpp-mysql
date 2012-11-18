@@ -1,0 +1,26 @@
+alias glibmm : : : :
+	<cflags>"`pkg-config --cflags glibmm-2.4`"
+	<linkflags>"`pkg-config --libs glibmm-2.4`"
+	;
+
+lib mysql ;
+
+alias libmysql : : : :
+	<cflags>"`mysql_config --include`"
+	<linkflags>"`mysql_config --libs`"
+	;
+	
+
+lib mysqlpp :
+	[ glob *.cpp ] :
+	<cflags>-fPIC
+	<library>glibmm 
+	<library>libmysql
+	<library>../libdbpp
+	<include>../libmisc
+	: :
+	<include>.
+	<cflags>"-I`mysql_config --include`"
+	<library>glibmm 
+	<library>../libdbpp
+	;
