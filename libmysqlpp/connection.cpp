@@ -60,7 +60,9 @@ int
 MySQL::Connection::beginTx() const
 {
 	if (txDepth == 0) {
-		checkResult(mysql_autocommit(&conn, 0), true);
+		if (mysql_autocommit(&conn, 0)) {
+			throw Error(mysql_error(&conn));
+		}
 		rolledback = false;
 	}
 	return ++txDepth;
@@ -73,7 +75,9 @@ MySQL::Connection::commitTx() const
 		return rollbackTx();
 	}
 	if (--txDepth == 0) {
-		checkResult(mysql_commit(&conn), true);
+		if (mysql_commit(&conn)) {
+			throw Error(mysql_error(&conn));
+		}
 	}
 	return txDepth;
 }
@@ -82,7 +86,9 @@ int
 MySQL::Connection::rollbackTx() const
 {
 	if (--txDepth == 0) {
-		checkResult(mysql_rollback(&conn), true);
+		if (mysql_rollback(&conn)) {
+			throw Error(mysql_error(&conn));
+		}
 	}
 	else {
 		rolledback = true;
@@ -111,7 +117,9 @@ MySQL::Connection::bulkUpdateStyle() const
 void
 MySQL::Connection::ping() const
 {
-	checkResult(mysql_ping(&conn), true);
+	if (mysql_ping(&conn)) {
+		throw Error(mysql_error(&conn));
+	}
 }
 
 
@@ -125,14 +133,6 @@ DB::ModifyCommand *
 MySQL::Connection::newModifyCommand(const std::string & sql) const
 {
 	return new ModifyCommand(this, sql);
-}
-
-void
-MySQL::Connection::checkResult(my_bool actual, my_bool expected) const
-{
-	if (actual != expected) {
-		throw Error(mysql_error(&conn));
-	}
 }
 
 void

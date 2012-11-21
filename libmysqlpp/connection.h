@@ -32,7 +32,6 @@ namespace MySQL {
 		private:
 			my_bool my_true;
 
-			void checkResult(my_bool actual, my_bool expected) const;
 			mutable unsigned int txDepth;
 			mutable bool rolledback;
 	};
