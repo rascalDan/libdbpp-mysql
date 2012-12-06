@@ -4,8 +4,10 @@
 #include "../libdbpp/connection.h"
 #include "error.h"
 #include <mysql.h>
+#include <boost/shared_ptr.hpp>
 
 namespace MySQL {
+	class LoadContext;
 	class Connection : public DB::Connection {
 		public:
 			Connection(const std::string & info);
@@ -34,6 +36,8 @@ namespace MySQL {
 
 			mutable unsigned int txDepth;
 			mutable bool rolledback;
+
+			mutable boost::shared_ptr<LoadContext> ctx;
 	};
 }
 
