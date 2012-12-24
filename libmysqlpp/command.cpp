@@ -10,11 +10,9 @@ MySQL::Command::Command(const Connection * conn, const std::string & sql) :
 	paramsNeedBinding(false)
 {
 	if (!stmt) {
-		fprintf(stderr, "here1\n");
 		throw Error(mysql_error(&conn->conn));
 	}
 	if (mysql_stmt_prepare(stmt, sql.c_str(), sql.length())) {
-		fprintf(stderr, "here2\n");
 		throw Error(mysql_stmt_error(stmt));
 	}
 	binds.resize(mysql_stmt_param_count(stmt));
