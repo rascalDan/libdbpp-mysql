@@ -44,6 +44,9 @@ MySQL::SelectCommand::execute()
 				case MYSQL_TYPE_DATETIME:
 					columns.insert(boost::shared_ptr<ColumnBase>(new Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>(fieldDefs[i].name, i, &fields[i])));
 					break;
+				case MYSQL_TYPE_TIME:
+					columns.insert(boost::shared_ptr<ColumnBase>(new Column<MYSQL_TIME, MYSQL_TYPE_TIME>(fieldDefs[i].name, i, &fields[i])));
+					break;
 				case MYSQL_TYPE_STRING:
 				case MYSQL_TYPE_VAR_STRING:
 					columns.insert(boost::shared_ptr<ColumnBase>(new StringColumn(fieldDefs[i].name, i, &fields[i], fieldDefs[i].length)));
@@ -56,7 +59,6 @@ MySQL::SelectCommand::execute()
 				case MYSQL_TYPE_SET:
 				case MYSQL_TYPE_ENUM:
 				case MYSQL_TYPE_GEOMETRY:
-				case MYSQL_TYPE_TIME:
 				default:
 					mysql_free_result(prepare_meta_result);
 					throw Error("Unexpected type");

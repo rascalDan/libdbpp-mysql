@@ -115,25 +115,31 @@ MySQL::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 	binds[n].is_unsigned = 0;
 }
 void
-MySQL::Command::bindParamT(unsigned int n, const tm * v)
+MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_DATETIME;
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(MYSQL_TIME));
 	MYSQL_TIME & ts = *static_cast<MYSQL_TIME*>(binds[n].buffer);
-	ts.year = v->tm_year + 1900;
-	ts.month = v->tm_mon + 1;
-	ts.day = v->tm_mday;
-	ts.hour = v->tm_hour;
-	ts.minute = v->tm_min;
-	ts.second = v->tm_sec;
+	ts.year = v.date().year();
+	ts.month = v.date().month();
+	ts.day = v.date().day();
+	ts.hour = v.time_of_day().hours();
+	ts.minute = v.time_of_day().minutes();
+	ts.second = v.time_of_day().seconds();
+	ts.second_part = v.time_of_day().total_microseconds() % 1000000;
 	ts.neg = 0;
 }
 void
-MySQL::Command::bindParamT(unsigned int n, time_t v)
+MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration & v)
 {
-	struct tm t;
-	gmtime_r(&v, &t);
-	bindParamT(n, &t);
+	binds[n].buffer_type = MYSQL_TYPE_TIME;
+	binds[n].buffer = realloc(binds[n].buffer, sizeof(MYSQL_TIME));
+	MYSQL_TIME & ts = *static_cast<MYSQL_TIME*>(binds[n].buffer);
+	ts.hour = v.hours();
+	ts.minute = v.minutes();
+	ts.second = v.seconds();
+	ts.second_part = v.total_microseconds() % 1000000;
+	ts.neg = (v.is_negative() ? 1 : 0);
 }
 void
 MySQL::Command::bindNull(unsigned int n)

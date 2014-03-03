@@ -2,6 +2,7 @@
 #include "selectcommand.h"
 #include "error.h"
 #include <string.h>
+#include <boost/date_time/gregorian/gregorian_types.hpp>
 
 MySQL::ColumnBase::ColumnBase(const char * name, unsigned int i) :
 	DB::Column(name, i)
@@ -94,19 +95,24 @@ namespace MySQL {
 			h.null();
 		}
 		else {
-			struct tm tm;
-			memset(&tm, 0, sizeof(tm));
-			tm.tm_year = value.year - 1900;
-			tm.tm_mon = value.month - 1;
-			tm.tm_mday = value.day;
-			tm.tm_hour = value.hour;
-			tm.tm_min = value.minute;
-			tm.tm_sec = value.second;
-			h.timestamp(tm);
+			h.timestamp(boost::posix_time::ptime(
+						boost::gregorian::date(value.year, value.month, value.day),
+						boost::posix_time::time_duration(value.hour, value.minute, value.second) + boost::posix_time::microseconds(value.second_part)));
+		}
+	}
+	template <> void Column<MYSQL_TIME, MYSQL_TYPE_TIME>::apply(DB::HandleField & h) const
+	{
+		if (is_null) {
+			h.null();
+		}
+		else {
+			h.interval(
+						boost::posix_time::time_duration(value.hour, value.minute, value.second) + boost::posix_time::microseconds(value.second_part));
 		}
 	}
 
 	template class Column<int64_t, MYSQL_TYPE_LONGLONG>;
 	template class Column<double, MYSQL_TYPE_DOUBLE>;
 	template class Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>;
+	template class Column<MYSQL_TIME, MYSQL_TYPE_TIME>;
 }
