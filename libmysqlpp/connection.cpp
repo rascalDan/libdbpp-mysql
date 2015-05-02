@@ -4,19 +4,41 @@
 #include "modifycommand.h"
 #include "reflection.h"
 #include <ucontext.h>
+#include <boost/optional.hpp>
 
 class Opts {
 	public:
 		Opts() { port = 3306; }
-		std::string server;
-		std::string user;
-		std::string password;
-		std::string database;
+		typedef boost::optional<std::string> OptString;
+		OptString server;
+		OptString user;
+		OptString password;
+		OptString database;
 		unsigned int port;
-		std::string unix_socket;
+		OptString unix_socket;
+		OptString options;
 
 		static Reflector<Opts>::Vars vars;
 };
+
+const char *
+operator~(const Opts::OptString & os)
+{
+	if (os) {
+		return os->c_str();
+	}
+	return NULL;
+}
+
+namespace std {
+	template <typename T>
+	std::istream &
+	operator>>(std::istream & s, boost::optional<T> & o)
+	{
+		o = T();
+		return (s >> *o);
+	}
+}
 
 Reflector<Opts>::Vars Opts::vars = {
 	Map(Opts, server),
@@ -25,6 +47,7 @@ Reflector<Opts>::Vars Opts::vars = {
 	Map(Opts, database),
 	Map(Opts, unix_socket),
 	Map(Opts, port),
+	Map(Opts, options),
 };
 
 
@@ -34,8 +57,11 @@ MySQL::Connection::Connection(const std::string & str) :
 {
 	Opts o(Reflector<Opts>::NameValueNew(str));
 	mysql_init(&conn);
-	if (mysql_real_connect(&conn, o.server.c_str(), o.user.c_str(), o.password.c_str(), o.database.c_str(),
-				o.port, o.unix_socket.c_str(), CLIENT_LOCAL_FILES | CLIENT_MULTI_STATEMENTS) == NULL) {
+	if (o.options) {
+		mysql_options(&conn, MYSQL_READ_DEFAULT_GROUP, ~o.options);
+	}
+	if (mysql_real_connect(&conn, ~o.server, ~o.user, ~o.password, ~o.database,
+				o.port, ~o.unix_socket, CLIENT_LOCAL_FILES | CLIENT_MULTI_STATEMENTS) == NULL) {
 		throw ConnectionError();
 	}
 	if (mysql_set_character_set(&conn, "utf8")) {
