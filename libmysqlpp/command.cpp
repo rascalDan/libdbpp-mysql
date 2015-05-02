@@ -92,6 +92,14 @@ MySQL::Command::bindParamI(unsigned int n, long long unsigned int v)
 	binds[n].is_unsigned = 1;
 }
 void
+MySQL::Command::bindParamB(unsigned int n, bool v)
+{
+	binds[n].buffer_type = MYSQL_TYPE_TINY;
+	binds[n].buffer = realloc(binds[n].buffer, sizeof(bool));
+	*static_cast<bool*>(binds[n].buffer) = (v ? 1 : 0);
+	binds[n].is_unsigned = 1;
+}
+void
 MySQL::Command::bindParamF(unsigned int n, double v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_DOUBLE;
