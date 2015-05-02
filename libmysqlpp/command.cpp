@@ -135,6 +135,9 @@ MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duratio
 	binds[n].buffer_type = MYSQL_TYPE_TIME;
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(MYSQL_TIME));
 	MYSQL_TIME & ts = *static_cast<MYSQL_TIME*>(binds[n].buffer);
+	ts.year = 0;
+	ts.month = 0;
+	ts.day = 0;
 	ts.hour = v.hours();
 	ts.minute = v.minutes();
 	ts.second = v.seconds();
