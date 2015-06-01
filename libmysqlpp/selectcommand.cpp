@@ -8,6 +8,7 @@ MySQL::SelectCommand::SelectCommand(const Connection * conn, const std::string &
 	DB::Command(sql),
 	DB::SelectCommand(sql),
 	MySQL::Command(conn, sql),
+	prepared(false),
 	executed(false)
 {
 }
@@ -15,7 +16,7 @@ MySQL::SelectCommand::SelectCommand(const Connection * conn, const std::string &
 void
 MySQL::SelectCommand::execute()
 {
-	if (!executed) {
+	if (!prepared) {
 		bindParams();
 		fields.resize(mysql_stmt_field_count(stmt));
 		for (Binds::iterator i = fields.begin(); i != fields.end(); ++i) {
@@ -68,6 +69,9 @@ MySQL::SelectCommand::execute()
 		if (mysql_stmt_bind_result(stmt, &fields.front())) {
 			throw Error(mysql_stmt_error(stmt));
 		}
+		prepared = true;
+	}
+	if (!executed) {
 		if (mysql_stmt_execute(stmt)) {
 			throw Error(mysql_stmt_error(stmt));
 		}
@@ -86,6 +90,7 @@ MySQL::SelectCommand::fetch()
 		case 0:
 			return true;
 		case MYSQL_NO_DATA:
+			executed = false;
 			return false;
 		default:
 			throw Error(mysql_stmt_error(stmt));

@@ -15,6 +15,7 @@ namespace MySQL {
 			void execute();
 
 		private:
+			bool prepared;
 			bool executed;
 			Binds fields;
 	};
