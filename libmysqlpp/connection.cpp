@@ -2,7 +2,7 @@
 #include "error.h"
 #include "selectcommand.h"
 #include "modifycommand.h"
-#include "reflection.h"
+#include <nvpParse.h>
 #include <ucontext.h>
 #include <boost/optional.hpp>
 
@@ -17,8 +17,6 @@ class Opts {
 		unsigned int port;
 		OptString unix_socket;
 		OptString options;
-
-		static Reflector<Opts>::Vars vars;
 };
 
 const char *
@@ -40,14 +38,15 @@ namespace std {
 	}
 }
 
-Reflector<Opts>::Vars Opts::vars = {
-	Map(Opts, server),
-	Map(Opts, user),
-	Map(Opts, password),
-	Map(Opts, database),
-	Map(Opts, unix_socket),
-	Map(Opts, port),
-	Map(Opts, options),
+using namespace AdHoc;
+NvpTarget(Opts) OptsTargetMap {
+	NvpValue(Opts, server),
+	NvpValue(Opts, user),
+	NvpValue(Opts, password),
+	NvpValue(Opts, database),
+	NvpValue(Opts, unix_socket),
+	NvpValue(Opts, port),
+	NvpValue(Opts, options),
 };
 
 
@@ -55,7 +54,9 @@ MySQL::Connection::Connection(const std::string & str) :
 	txDepth(0),
 	rolledback(false)
 {
-	Opts o(Reflector<Opts>::NameValueNew(str));
+	std::stringstream i(str);
+	Opts o;
+	NvpParse::parse(i, OptsTargetMap, o);
 	mysql_init(&conn);
 	if (o.options) {
 		mysql_options(&conn, MYSQL_READ_DEFAULT_GROUP, ~o.options);
