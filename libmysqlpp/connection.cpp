@@ -3,6 +3,7 @@
 #include "selectcommand.h"
 #include "modifycommand.h"
 #include <nvpParse.h>
+#include <runtimeContext.h>
 #include <ucontext.h>
 #include <boost/optional.hpp>
 
@@ -164,17 +165,14 @@ MySQL::Connection::newModifyCommand(const std::string & sql) const
 }
 
 namespace MySQL {
-	class LoadContext {
+	class LoadContext : public AdHoc::System::RuntimeContext {
 		public:
-			LoadContext(MYSQL * c, const char * table, const char * extra) :
+			LoadContext(MYSQL * c) :
 				loadBuf(NULL),
 				loadBufLen(0),
 				bufOff(0),
 				conn(c)
 			{
-				static char buf[BUFSIZ];
-				int len = snprintf(buf, BUFSIZ, "LOAD DATA LOCAL INFILE 'any' INTO TABLE %s %s", table, extra);
-				mysql_send_query(conn, buf, len);
 			}
 
 			static int local_infile_init(void ** ptr, const char *, void * ctx) {
@@ -185,7 +183,7 @@ namespace MySQL {
 			static int local_infile_read(void * obj, char * buf, unsigned int bufSize) {
 				LoadContext * ctx = static_cast<LoadContext *>(obj);
 				if (ctx->loadBufLen - ctx->bufOff == 0) {
-					swapcontext(&ctx->jmpMySQL, &ctx->jmpP2);
+					ctx->swapContext();
 					if (ctx->loadBufLen - ctx->bufOff <= 0) {
 						// Nothing to do or error
 						return ctx->bufOff;
@@ -204,14 +202,11 @@ namespace MySQL {
 				return 0;
 			}
 
-			static void loadLocalData(LoadContext * ctx)
+			void callback() override
 			{
-				ctx->loadReturn = mysql_read_query_result(ctx->conn);
+				loadReturn = mysql_read_query_result(conn);
 			}
 
-			char stack[16384];
-			ucontext_t jmpP2;
-			ucontext_t jmpMySQL;
 			const char * loadBuf;
 			unsigned int loadBufLen;
 			int bufOff;
@@ -223,18 +218,16 @@ namespace MySQL {
 void
 MySQL::Connection::beginBulkUpload(const char * table, const char * extra) const
 {
-	ctx = boost::shared_ptr<LoadContext>(new MySQL::LoadContext(&conn, table, extra));
-	getcontext(&ctx->jmpMySQL);
-	ctx->jmpMySQL.uc_stack.ss_sp = ctx->stack;
-	ctx->jmpMySQL.uc_stack.ss_size = sizeof(ctx->stack);
-	ctx->jmpMySQL.uc_link = &ctx->jmpP2;
-	makecontext(&ctx->jmpMySQL, (void (*)())&LoadContext::loadLocalData, 1, ctx.get());
+	static char buf[BUFSIZ];
+	int len = snprintf(buf, BUFSIZ, "LOAD DATA LOCAL INFILE 'any' INTO TABLE %s %s", table, extra);
+	mysql_send_query(&conn, buf, len);
+
+	ctx = boost::shared_ptr<LoadContext>(new MySQL::LoadContext(&conn));
 
 	mysql_set_local_infile_handler(&conn, LoadContext::local_infile_init, LoadContext::local_infile_read,
 			LoadContext::local_infile_end, LoadContext::local_infile_error, ctx.get());
 
-	// begin the load, context swaps back when buffer is empty
-	swapcontext(&ctx->jmpP2, &ctx->jmpMySQL);
+	ctx->swapContext();
 }
 
 void
@@ -244,7 +237,7 @@ MySQL::Connection::endBulkUpload(const char * msg) const
 	ctx->loadBufLen = 0;
 	ctx->bufOff = msg ? -1 : 0;
 	// switch context with empty buffer fires finished
-	swapcontext(&ctx->jmpP2, &ctx->jmpMySQL);
+	ctx->swapContext();
 	// Check result
 	if (!msg) {
 		if (ctx->loadReturn) {
@@ -262,7 +255,7 @@ MySQL::Connection::bulkUploadData(const char * data, size_t len) const
 	ctx->loadBufLen = len;
 	ctx->bufOff = 0;
 	// switch context to load the buffered data
-	swapcontext(&ctx->jmpP2, &ctx->jmpMySQL);
+	ctx->swapContext();
 	return len;
 }
 
