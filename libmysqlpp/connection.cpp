@@ -7,6 +7,8 @@
 #include <ucontext.h>
 #include <boost/optional.hpp>
 
+NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory);
+
 class Opts {
 	public:
 		Opts() { port = 3306; }

@@ -11,17 +11,20 @@ alias libmysql : : : :
 	<linkflags>"`mysql_config --libs`"
 	;
 	
-
-lib mysqlpp :
+lib dbpp-mysql :
 	[ glob *.cpp ] :
-	<cflags>-fPIC
 	<library>glibmm 
 	<library>libmysql
 	<library>../libdbpp
 	<library>adhocutil
+	<cflags>-fvisibility=hidden
+	<variant>release:<cflags>-flto
 	: :
 	<include>.
 	<cflags>"-I`mysql_config --include`"
 	<library>glibmm 
 	<library>../libdbpp
 	;
+
+build-project unittests ;
+
