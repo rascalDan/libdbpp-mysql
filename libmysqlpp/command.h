@@ -1,7 +1,7 @@
 #ifndef MY_COMMAND_H
 #define MY_COMMAND_H
 
-#include "../libdbpp/command.h"
+#include <command.h>
 #include <mysql.h>
 #include <vector>
 

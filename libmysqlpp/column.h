@@ -1,7 +1,7 @@
 #ifndef MY_COLUMN_H
 #define MY_COLUMN_H
 
-#include "../libdbpp/column.h"
+#include <column.h>
 #include <mysql.h>
 
 namespace MySQL {

@@ -1,7 +1,7 @@
 #ifndef MY_ERROR_H
 #define MY_ERROR_H
 
-#include "../libdbpp/error.h"
+#include <error.h>
 
 namespace MySQL {
 	class Error : public DB::Error {

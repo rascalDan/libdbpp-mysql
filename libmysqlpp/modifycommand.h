@@ -1,7 +1,7 @@
 #ifndef MY_MODIFYCOMMAND_H
 #define MY_MODIFYCOMMAND_H
 
-#include "../libdbpp/modifycommand.h"
+#include <modifycommand.h>
 #include "command.h"
 
 namespace MySQL {

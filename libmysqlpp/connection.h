@@ -1,7 +1,7 @@
 #ifndef MY_CONNECTION_H
 #define MY_CONNECTION_H
 
-#include "../libdbpp/connection.h"
+#include <connection.h>
 #include "error.h"
 #include <mysql.h>
 #include <boost/shared_ptr.hpp>

@@ -1,3 +1,4 @@
+import package ;
 alias glibmm : : : :
 	<cflags>"`pkg-config --cflags glibmm-2.4`"
 	<linkflags>"`pkg-config --libs glibmm-2.4`"
@@ -5,26 +6,33 @@ alias glibmm : : : :
 
 lib mysql ;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
+lib dbppcore : : : : <include>/usr/include/dbpp ;
+lib boost_date_time ;
+lib boost_system ;
 
 alias libmysql : : : :
 	<cflags>"`mysql_config --include`"
 	<linkflags>"`mysql_config --libs`"
 	;
-	
+
 lib dbpp-mysql :
 	[ glob *.cpp ] :
-	<library>glibmm 
+	<library>glibmm
 	<library>libmysql
-	<library>../libdbpp
+	<library>dbppcore
 	<library>adhocutil
+	<library>boost_date_time
+	<library>boost_system
 	<cflags>-fvisibility=hidden
 	<variant>release:<cflags>-flto
 	: :
 	<include>.
 	<cflags>"-I`mysql_config --include`"
-	<library>glibmm 
-	<library>../libdbpp
+	<library>glibmm
+	<library>dbppcore
 	;
 
 build-project unittests ;
+
+package.install install : <install-source-root>. : : dbpp-mysql : [ glob *.h ] ;
 
