@@ -261,3 +261,9 @@ MySQL::Connection::bulkUploadData(const char * data, size_t len) const
 	return len;
 }
 
+int64_t
+MySQL::Connection::insertId() const
+{
+	return mysql_insert_id(&conn);
+}
+

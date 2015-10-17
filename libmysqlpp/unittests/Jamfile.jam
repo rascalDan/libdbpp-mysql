@@ -17,6 +17,7 @@ run
 	<library>boost_utf
 	<library>boost_system
 	<library>boost_filesystem
+	<dependency>mysqlschema.sql
 	:
 	testmysql
 	;

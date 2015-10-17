@@ -12,3 +12,7 @@ CREATE TABLE bulktest(
 		intcol int,
 		stringcol varchar(3000));
 
+CREATE TABLE inserts(
+		id int auto_increment,
+		num int,
+		primary key(id));

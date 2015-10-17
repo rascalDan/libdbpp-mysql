@@ -140,5 +140,22 @@ BOOST_AUTO_TEST_CASE( bigIterate )
 	delete ro;
 }
 
+BOOST_AUTO_TEST_CASE( insertId )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
+	auto ins = ro->newModifyCommand("INSERT INTO inserts(num) VALUES(?)");
+	ins->bindParamI(0, 4);
+	ins->execute();
+	BOOST_REQUIRE_EQUAL(1, ro->insertId());
+	ins->bindParamI(0, 40);
+	ins->execute();
+	BOOST_REQUIRE_EQUAL(2, ro->insertId());
+	ins->bindParamI(0, -4);
+	ins->execute();
+	BOOST_REQUIRE_EQUAL(3, ro->insertId());
+	delete ins;
+	delete ro;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 
