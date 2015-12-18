@@ -24,7 +24,6 @@ lib dbpp-mysql :
 	<library>boost_date_time
 	<library>boost_system
 	<cflags>-fvisibility=hidden
-	<variant>release:<cflags>-flto
 	: :
 	<include>.
 	<cflags>"-I`mysql_config --include`"
