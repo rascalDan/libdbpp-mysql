@@ -2,7 +2,7 @@
 #define MY_MODIFYCOMMAND_H
 
 #include <modifycommand.h>
-#include "command.h"
+#include "my-command.h"
 
 namespace MySQL {
 	class Connection;

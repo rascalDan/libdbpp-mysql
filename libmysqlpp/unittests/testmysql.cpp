@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE TestMySQL
 #include <boost/test/unit_test.hpp>
 
-#include <mock.h>
+#include <my-mock.h>
 #include <definedDirs.h>
 #include <dbpp/modifycommand.h>
 #include <dbpp/selectcommand.h>

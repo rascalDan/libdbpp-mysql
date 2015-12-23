@@ -1,5 +1,5 @@
-#include "command.h"
-#include "connection.h"
+#include "my-command.h"
+#include "my-connection.h"
 #include <stdlib.h>
 #include <string.h>
 

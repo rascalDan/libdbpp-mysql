@@ -2,7 +2,7 @@
 #define MY_CONNECTION_H
 
 #include <connection.h>
-#include "error.h"
+#include "my-error.h"
 #include <mysql.h>
 #include <boost/shared_ptr.hpp>
 

@@ -1,5 +1,5 @@
-#include "connection.h"
-#include "mock.h"
+#include "my-connection.h"
+#include "my-mock.h"
 #include <buffer.h>
 
 namespace MySQL {

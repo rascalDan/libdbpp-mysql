@@ -7,7 +7,7 @@ lib boost_date_time ;
 lib boost_system ;
 
 lib dbpp-mysql :
-	[ glob *.cpp ] :
+	[ glob my-*.cpp ] :
 	<library>..//glibmm
 	<library>mysqlclient
 	<library>dbppcore
@@ -24,5 +24,5 @@ lib dbpp-mysql :
 
 build-project unittests ;
 
-package.install install : <install-source-root>. : : dbpp-mysql : [ glob *.h ] ;
+package.install install : <install-source-root>. : : dbpp-mysql : [ glob my-*.h ] ;
 

@@ -1,4 +1,4 @@
-#include "error.h"
+#include "my-error.h"
 #include <string.h>
 
 MySQL::Error::Error() :

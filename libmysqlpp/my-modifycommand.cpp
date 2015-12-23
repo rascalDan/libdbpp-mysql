@@ -1,5 +1,5 @@
-#include "modifycommand.h"
-#include "error.h"
+#include "my-modifycommand.h"
+#include "my-error.h"
 #include <stdlib.h>
 #include "connection.h"
 

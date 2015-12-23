@@ -1,7 +1,7 @@
-#include "connection.h"
-#include "error.h"
-#include "selectcommand.h"
-#include "modifycommand.h"
+#include "my-connection.h"
+#include "my-error.h"
+#include "my-selectcommand.h"
+#include "my-modifycommand.h"
 #include <nvpParse.h>
 #include <runtimeContext.h>
 #include <ucontext.h>

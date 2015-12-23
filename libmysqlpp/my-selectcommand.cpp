@@ -1,7 +1,7 @@
-#include "selectcommand.h"
-#include "connection.h"
-#include "column.h"
-#include "error.h"
+#include "my-selectcommand.h"
+#include "my-connection.h"
+#include "my-column.h"
+#include "my-error.h"
 #include <string.h>
 
 MySQL::SelectCommand::SelectCommand(const Connection * conn, const std::string & sql) :

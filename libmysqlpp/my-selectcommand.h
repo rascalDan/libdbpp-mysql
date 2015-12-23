@@ -2,7 +2,7 @@
 #define MY_SELECTCOMMAND_H
 
 #include <selectcommand.h>
-#include "command.h"
+#include "my-command.h"
 
 namespace MySQL {
 	class Connection;

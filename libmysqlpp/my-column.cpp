@@ -1,6 +1,6 @@
-#include "column.h"
-#include "selectcommand.h"
-#include "error.h"
+#include "my-column.h"
+#include "my-selectcommand.h"
+#include "my-error.h"
 #include <string.h>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 
