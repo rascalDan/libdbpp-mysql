@@ -1,8 +1,4 @@
 import package ;
-alias glibmm : : : :
-	<cflags>"`pkg-config --cflags glibmm-2.4`"
-	<linkflags>"`pkg-config --libs glibmm-2.4`"
-	;
 
 lib mysql ;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
@@ -17,7 +13,7 @@ alias libmysql : : : :
 
 lib dbpp-mysql :
 	[ glob *.cpp ] :
-	<library>glibmm
+	<library>..//glibmm
 	<library>libmysql
 	<library>dbppcore
 	<library>adhocutil
@@ -27,7 +23,7 @@ lib dbpp-mysql :
 	: :
 	<include>.
 	<cflags>"-I`mysql_config --include`"
-	<library>glibmm
+	<library>..//glibmm
 	<library>dbppcore
 	;
 
