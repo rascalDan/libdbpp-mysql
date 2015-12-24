@@ -22,3 +22,18 @@ run
 	testmysql
 	;
 
+run
+	testmysqle.cpp
+	: : :
+	<define>ROOT=\"$(me)\"
+	<define>BOOST_TEST_DYN_LINK
+	<library>..//dbpp-mysql-embedded
+	<library>dbpptestcore
+	<library>boost_utf
+	<library>boost_system
+	<library>boost_filesystem
+	<dependency>mysqlschema.sql
+	:
+	testmysqle
+	;
+

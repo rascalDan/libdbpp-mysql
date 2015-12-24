@@ -4,9 +4,10 @@
 #include <error.h>
 #include <mysql.h>
 #include <exception.h>
+#include <visibility.h>
 
 namespace MySQL {
-	class Error : public AdHoc::Exception<DB::Error> {
+	class DLL_PUBLIC Error : public AdHoc::Exception<DB::Error> {
 		public:
 			Error(MYSQL_STMT *);
 			Error(MYSQL *);

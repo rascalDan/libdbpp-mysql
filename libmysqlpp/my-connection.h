@@ -2,6 +2,7 @@
 #define MY_CONNECTION_H
 
 #include <connection.h>
+#include <visibility.h>
 #include "my-error.h"
 #include <mysql.h>
 #include <boost/shared_ptr.hpp>
@@ -14,7 +15,7 @@ namespace MySQL {
 
 	class LoadContext;
 
-	class Connection : public DB::Connection {
+	class DLL_PUBLIC Connection : public DB::Connection {
 		public:
 			Connection(const std::string & info);
 			~Connection();
@@ -36,6 +37,9 @@ namespace MySQL {
 			int64_t insertId() override;
 
 			mutable MYSQL conn;
+
+		protected:
+			Connection();
 
 		private:
 			my_bool my_true;

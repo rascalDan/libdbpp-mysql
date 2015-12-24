@@ -1,10 +1,12 @@
 import package ;
 
 lib mysqlclient : : : : <include>/usr/include/mysql ;
+lib mysqld : : : : <include>/usr/include/mysql <dll-path>/usr/lib/mysql <library-path>/usr/lib/mysql ;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
 lib dbppcore : : : : <include>/usr/include/dbpp ;
 lib boost_date_time ;
 lib boost_system ;
+lib boost_filesystem ;
 
 lib dbpp-mysql :
 	[ glob my-*.cpp ] :
@@ -19,6 +21,17 @@ lib dbpp-mysql :
 	<library>mysqlclient
 	<library>..//glibmm
 	<library>dbppcore
+	;
+
+lib dbpp-mysql-embedded :
+	[ glob embeddedmy-*.cpp ] :
+	<library>adhocutil
+	<library>dbpp-mysql
+	<library>mysqld
+	<library>boost_system
+	<library>boost_filesystem
+	: :
+	<library>mysqld
 	;
 
 build-project unittests ;

@@ -77,6 +77,10 @@ MySQL::Connection::Connection(const std::string & str)
 	}
 }
 
+MySQL::Connection::Connection()
+{
+}
+
 MySQL::Connection::~Connection()
 {
 	mysql_close(&conn);
