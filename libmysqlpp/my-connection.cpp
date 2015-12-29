@@ -58,9 +58,7 @@ NvpTarget(Opts) OptsTargetMap {
 };
 
 
-MySQL::Connection::Connection(const std::string & str) :
-	txDepth(0),
-	rolledback(false)
+MySQL::Connection::Connection(const std::string & str)
 {
 	std::stringstream i(str);
 	Opts o;
@@ -84,58 +82,27 @@ MySQL::Connection::~Connection()
 }
 
 void
-MySQL::Connection::finish() const
+MySQL::Connection::beginTxInt()
 {
-	if (txDepth != 0) {
-		rollbackTx();
-		throw DB::TransactionStillOpen();
+	if (mysql_autocommit(&conn, 0)) {
+		throw Error(&conn);
 	}
 }
 
-int
-MySQL::Connection::beginTx() const
+void
+MySQL::Connection::commitTxInt()
 {
-	if (txDepth == 0) {
-		if (mysql_autocommit(&conn, 0)) {
-			throw Error(&conn);
-		}
-		rolledback = false;
+	if (mysql_commit(&conn)) {
+		throw Error(&conn);
 	}
-	return ++txDepth;
 }
 
-int
-MySQL::Connection::commitTx() const
+void
+MySQL::Connection::rollbackTxInt()
 {
-	if (rolledback) {
-		return rollbackTx();
+	if (mysql_rollback(&conn)) {
+		throw Error(&conn);
 	}
-	if (--txDepth == 0) {
-		if (mysql_commit(&conn)) {
-			throw Error(&conn);
-		}
-	}
-	return txDepth;
-}
-
-int
-MySQL::Connection::rollbackTx() const
-{
-	if (--txDepth == 0) {
-		if (mysql_rollback(&conn)) {
-			throw Error(&conn);
-		}
-	}
-	else {
-		rolledback = true;
-	}
-	return txDepth;
-}
-
-bool
-MySQL::Connection::inTx() const
-{
-	return txDepth;
 }
 
 DB::BulkDeleteStyle

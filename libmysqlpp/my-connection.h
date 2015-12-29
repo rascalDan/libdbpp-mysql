@@ -19,11 +19,9 @@ namespace MySQL {
 			Connection(const std::string & info);
 			~Connection();
 
-			void finish() const override;
-			int beginTx() const override;
-			int commitTx() const override;
-			int rollbackTx() const override;
-			bool inTx() const override;
+			void beginTxInt() override;
+			void commitTxInt() override;
+			void rollbackTxInt() override;
 			void ping() const override;
 			DB::BulkDeleteStyle bulkDeleteStyle() const override;
 			DB::BulkUpdateStyle bulkUpdateStyle() const override;
@@ -41,9 +39,6 @@ namespace MySQL {
 
 		private:
 			my_bool my_true;
-
-			mutable unsigned int txDepth;
-			mutable bool rolledback;
 
 			mutable boost::shared_ptr<LoadContext> ctx;
 	};
