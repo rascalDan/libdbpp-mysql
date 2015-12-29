@@ -35,7 +35,7 @@ namespace MySQL {
 			void	endBulkUpload(const char *) override;
 			size_t bulkUploadData(const char *, size_t) const override;
 
-			int64_t insertId() const override;
+			int64_t insertId() override;
 
 			mutable MYSQL conn;
 
