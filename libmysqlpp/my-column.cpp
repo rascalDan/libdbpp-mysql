@@ -26,10 +26,12 @@ MySQL::StringColumn::StringColumn(const char * name, unsigned int field, MYSQL_B
 	b->buffer_length = len;
 	b->length = &length;
 }
+
 MySQL::StringColumn::~StringColumn()
 {
 	delete[] value;
 }
+
 void
 MySQL::StringColumn::apply(DB::HandleField & h) const
 {
@@ -40,6 +42,7 @@ MySQL::StringColumn::apply(DB::HandleField & h) const
 		h.string(value, length);
 	}
 }
+
 MySQL::NullColumn::NullColumn(const char * name, unsigned int field, MYSQL_BIND * b) :
 	ColumnBase(name, field)
 {
@@ -48,6 +51,7 @@ MySQL::NullColumn::NullColumn(const char * name, unsigned int field, MYSQL_BIND 
 	b->buffer = NULL;
 	b->buffer_length = 0;
 }
+
 void
 MySQL::NullColumn::apply(DB::HandleField & h) const
 {

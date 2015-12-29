@@ -10,10 +10,10 @@ MySQL::Command::Command(const Connection * conn, const std::string & sql) :
 	paramsNeedBinding(false)
 {
 	if (!stmt) {
-		throw Error(mysql_error(&conn->conn));
+		throw Error(&conn->conn);
 	}
 	if (mysql_stmt_prepare(stmt, sql.c_str(), sql.length())) {
-		throw Error(mysql_stmt_error(stmt));
+		throw Error(stmt);
 	}
 	binds.resize(mysql_stmt_param_count(stmt));
 	if (binds.size()) {
@@ -165,7 +165,7 @@ MySQL::Command::bindParams()
 {
 	if (paramsNeedBinding) {
 		if (mysql_stmt_bind_param(stmt, &binds.front())) {
-			throw Error(mysql_stmt_error(stmt));
+			throw Error(stmt);
 			paramsNeedBinding = false;
 		}
 	}

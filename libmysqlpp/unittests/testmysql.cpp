@@ -2,10 +2,12 @@
 #include <boost/test/unit_test.hpp>
 
 #include <my-mock.h>
+#include <my-error.h>
 #include <definedDirs.h>
-#include <dbpp/modifycommand.h>
-#include <dbpp/selectcommand.h>
-#include <dbpp/column.h>
+#include <modifycommand.h>
+#include <selectcommand.h>
+#include <column.h>
+#include <connection.h>
 #include <testCore.h>
 #include <fstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -155,6 +157,14 @@ BOOST_AUTO_TEST_CASE( insertId )
 	BOOST_REQUIRE_EQUAL(3, ro->insertId());
 	delete ins;
 	delete ro;
+}
+
+BOOST_AUTO_TEST_CASE( errors )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
+	BOOST_REQUIRE_THROW(ro->execute("nonsense"), DB::Error);
+	delete ro;
+	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("mysql", "server=nohost"), DB::ConnectionError);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

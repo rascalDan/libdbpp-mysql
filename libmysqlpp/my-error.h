@@ -2,21 +2,18 @@
 #define MY_ERROR_H
 
 #include <error.h>
+#include <mysql.h>
+#include <exception.h>
 
 namespace MySQL {
-	class Error : public DB::Error {
+	class Error : public AdHoc::Exception<DB::Error> {
 		public:
-			Error();
-			Error(const Error &);
-			Error(const char *);
-			~Error() throw();
-
-			const char * what() const throw();
+			Error(MYSQL_STMT *);
+			Error(MYSQL *);
+			std::string message() const throw() override;
 
 		private:
-			char * msg;
-	};
-	class ConnectionError : public Error, public virtual DB::ConnectionError {
+			std::string msg;
 	};
 }
 

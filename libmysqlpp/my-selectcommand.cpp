@@ -62,21 +62,21 @@ MySQL::SelectCommand::execute()
 				case MYSQL_TYPE_GEOMETRY:
 				default:
 					mysql_free_result(prepare_meta_result);
-					throw Error("Unexpected type");
+					throw DB::ColumnTypeNotSupported();
 			}
 		}
 		mysql_free_result(prepare_meta_result);
 		if (mysql_stmt_bind_result(stmt, &fields.front())) {
-			throw Error(mysql_stmt_error(stmt));
+			throw Error(stmt);
 		}
 		prepared = true;
 	}
 	if (!executed) {
 		if (mysql_stmt_execute(stmt)) {
-			throw Error(mysql_stmt_error(stmt));
+			throw Error(stmt);
 		}
 		if (mysql_stmt_store_result(stmt)) {
-			throw Error(mysql_stmt_error(stmt));
+			throw Error(stmt);
 		}
 		executed = true;
 	}
@@ -93,7 +93,7 @@ MySQL::SelectCommand::fetch()
 			executed = false;
 			return false;
 		default:
-			throw Error(mysql_stmt_error(stmt));
+			throw Error(stmt);
 	}
 }
 

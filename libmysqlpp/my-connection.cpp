@@ -9,6 +9,11 @@
 
 NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory);
 
+MySQL::ConnectionError::ConnectionError(MYSQL * m) :
+	MySQL::Error(m)
+{
+}
+
 class Opts {
 	public:
 		Opts() { port = 3306; }
@@ -66,10 +71,10 @@ MySQL::Connection::Connection(const std::string & str) :
 	}
 	if (mysql_real_connect(&conn, ~o.server, ~o.user, ~o.password, ~o.database,
 				o.port, ~o.unix_socket, CLIENT_LOCAL_FILES | CLIENT_MULTI_STATEMENTS) == NULL) {
-		throw ConnectionError();
+		throw ConnectionError(&conn);
 	}
 	if (mysql_set_character_set(&conn, "utf8")) {
-		throw ConnectionError();
+		throw ConnectionError(&conn);
 	}
 }
 
@@ -83,7 +88,7 @@ MySQL::Connection::finish() const
 {
 	if (txDepth != 0) {
 		rollbackTx();
-		throw Error("Transaction still open");
+		throw DB::TransactionStillOpen();
 	}
 }
 
@@ -92,7 +97,7 @@ MySQL::Connection::beginTx() const
 {
 	if (txDepth == 0) {
 		if (mysql_autocommit(&conn, 0)) {
-			throw Error(mysql_error(&conn));
+			throw Error(&conn);
 		}
 		rolledback = false;
 	}
@@ -107,7 +112,7 @@ MySQL::Connection::commitTx() const
 	}
 	if (--txDepth == 0) {
 		if (mysql_commit(&conn)) {
-			throw Error(mysql_error(&conn));
+			throw Error(&conn);
 		}
 	}
 	return txDepth;
@@ -118,7 +123,7 @@ MySQL::Connection::rollbackTx() const
 {
 	if (--txDepth == 0) {
 		if (mysql_rollback(&conn)) {
-			throw Error(mysql_error(&conn));
+			throw Error(&conn);
 		}
 	}
 	else {
@@ -149,7 +154,7 @@ void
 MySQL::Connection::ping() const
 {
 	if (mysql_ping(&conn)) {
-		throw Error(mysql_error(&conn));
+		throw Error(&conn);
 	}
 }
 
@@ -244,7 +249,7 @@ MySQL::Connection::endBulkUpload(const char * msg) const
 	if (!msg) {
 		if (ctx->loadReturn) {
 			ctx.reset();
-			throw Error(mysql_error(&conn));
+			throw Error(&conn);
 		}
 	}
 	ctx.reset();

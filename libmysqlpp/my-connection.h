@@ -7,7 +7,13 @@
 #include <boost/shared_ptr.hpp>
 
 namespace MySQL {
+	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {
+		public:
+			ConnectionError(MYSQL *);
+	};
+
 	class LoadContext;
+
 	class Connection : public DB::Connection {
 		public:
 			Connection(const std::string & info);
