@@ -15,12 +15,6 @@ MySQL::ColumnBase::isNull() const
 	return is_null;
 }
 
-void
-MySQL::ColumnBase::rebind(DB::Command *, unsigned int) const
-{
-	throw Error("Not supported");
-}
-
 MySQL::StringColumn::StringColumn(const char * name, unsigned int field, MYSQL_BIND * b, unsigned int len) :
 	ColumnBase(name, field),
 	value(new char[len])

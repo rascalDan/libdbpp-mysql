@@ -11,7 +11,7 @@ namespace MySQL {
 			ColumnBase(const char * name, unsigned int field);
 
 			bool isNull() const;
-			void rebind(DB::Command *, unsigned int) const;
+
 		protected:
 			my_bool is_null;
 			long unsigned int length;
