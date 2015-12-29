@@ -223,7 +223,7 @@ namespace MySQL {
 }
 
 void
-MySQL::Connection::beginBulkUpload(const char * table, const char * extra) const
+MySQL::Connection::beginBulkUpload(const char * table, const char * extra)
 {
 	static char buf[BUFSIZ];
 	int len = snprintf(buf, BUFSIZ, "LOAD DATA LOCAL INFILE 'any' INTO TABLE %s %s", table, extra);
@@ -238,7 +238,7 @@ MySQL::Connection::beginBulkUpload(const char * table, const char * extra) const
 }
 
 void
-MySQL::Connection::endBulkUpload(const char * msg) const
+MySQL::Connection::endBulkUpload(const char * msg)
 {
 	ctx->loadBuf = NULL;
 	ctx->loadBufLen = 0;
