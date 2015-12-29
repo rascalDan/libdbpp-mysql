@@ -11,8 +11,8 @@ namespace MySQL {
 		public:
 			SelectCommand(const Connection *, const std::string & sql);
 
-			bool fetch();
-			void execute();
+			bool fetch() override;
+			void execute() override;
 
 		private:
 			bool prepared;
