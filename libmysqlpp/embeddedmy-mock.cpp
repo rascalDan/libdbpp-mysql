@@ -1,5 +1,6 @@
 #include "embeddedmy-connection.h"
 #include "embeddedmy-mock.h"
+#include "embeddedmy-server.h"
 #include <boost/filesystem/convenience.hpp>
 #include <buffer.h>
 
@@ -8,7 +9,7 @@ namespace MySQL {
 
 		Mock::Mock(const std::string & name, const std::vector<boost::filesystem::path> & ss) :
 			MockDatabase(name),
-			testDbPath(boost::filesystem::path("/tmp") / stringbf("embeddedmysql-%d-%d", getpid(), ++DB::MockDatabase::mocked))
+			dbname(stringbf("test_%d_%d", getpid(), ++DB::MockDatabase::mocked))
 		{
 			CreateNewDatabase();
 			PlaySchemaScripts(ss);
@@ -22,30 +23,29 @@ namespace MySQL {
 		DB::Connection *
 		Mock::openConnection() const
 		{
-			return new Connection(testDbPath.string());
+			return new Connection(stringbf("path=%s;database=%s", mockDbPath(), dbname));
 		}
 
 		void
 		Mock::CreateNewDatabase() const
 		{
-			boost::filesystem::create_directories(testDbPath);
-			const auto datadir = stringbf("--datadir=%s", testDbPath.string());
-			static const char * opts[] = {
-				typeid(this).name(),
-				datadir.c_str(),
-				"--bootstrap",
-				NULL
-			};
-			static const char * groups[] = { NULL };
-			mysql_library_init(3, (char**)opts, (char**)groups);
-			sleep(20);
+			auto path = mockDbPath();
+			embeddedServer = Server::getMock(path);
+			Connection initialize(embeddedServer.get(), "mysql");
+			initialize.execute("CREATE DATABASE " + dbname);
 		}
 
 		void
 		Mock::DropDatabase() const
 		{
-			mysql_library_end();
-			boost::filesystem::remove_all(testDbPath);
+			Connection initialize(embeddedServer.get(), "mysql");
+			initialize.execute("DROP DATABASE " + dbname);
+		}
+
+		boost::filesystem::path
+		Mock::mockDbPath()
+		{
+			return boost::filesystem::temp_directory_path() / stringbf("mysql-mock-%d", getpid());
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #include "my-error.h"
 #include "my-selectcommand.h"
 #include "my-modifycommand.h"
+#include "my-opts.h"
 #include <nvpParse.h>
 #include <runtimeContext.h>
 #include <ucontext.h>
@@ -18,34 +19,14 @@ MySQL::ConnectionError::ConnectionError(MYSQL * m) :
 class Opts {
 	public:
 		Opts() { port = 3306; }
-		typedef boost::optional<std::string> OptString;
-		OptString server;
-		OptString user;
-		OptString password;
-		OptString database;
+		MySQL::OptString server;
+		MySQL::OptString user;
+		MySQL::OptString password;
+		MySQL::OptString database;
 		unsigned int port;
-		OptString unix_socket;
-		OptString options;
+		MySQL::OptString unix_socket;
+		MySQL::OptString options;
 };
-
-const char *
-operator~(const Opts::OptString & os)
-{
-	if (os) {
-		return os->c_str();
-	}
-	return NULL;
-}
-
-namespace std {
-	template <typename T>
-	std::istream &
-	operator>>(std::istream & s, boost::optional<T> & o)
-	{
-		o = T();
-		return (s >> *o);
-	}
-}
 
 using namespace AdHoc;
 NvpTarget(Opts) OptsTargetMap {
@@ -141,6 +122,14 @@ DB::ModifyCommand *
 MySQL::Connection::newModifyCommand(const std::string & sql, const DB::CommandOptions *)
 {
 	return new ModifyCommand(this, sql);
+}
+
+void
+MySQL::Connection::execute(const std::string & sql)
+{
+	if (mysql_query(&conn, sql.c_str())) {
+		throw Error(&conn);
+	}
 }
 
 namespace MySQL {

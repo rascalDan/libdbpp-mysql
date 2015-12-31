@@ -8,7 +8,7 @@
 #include <boost/shared_ptr.hpp>
 
 namespace MySQL {
-	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {
+	class DLL_PUBLIC ConnectionError : public virtual Error, public virtual DB::ConnectionError {
 		public:
 			ConnectionError(MYSQL *);
 	};
@@ -35,6 +35,7 @@ namespace MySQL {
 			size_t bulkUploadData(const char *, size_t) const override;
 
 			int64_t insertId() override;
+			void execute(const std::string &) override;
 
 			mutable MYSQL conn;
 

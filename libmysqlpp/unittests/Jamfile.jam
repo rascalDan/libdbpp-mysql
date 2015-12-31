@@ -24,7 +24,7 @@ run
 
 run
 	testmysqle.cpp
-	: : :
+	: --log_level=all : :
 	<define>ROOT=\"$(me)\"
 	<define>BOOST_TEST_DYN_LINK
 	<library>..//dbpp-mysql-embedded
