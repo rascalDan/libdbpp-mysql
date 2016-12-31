@@ -1,6 +1,6 @@
 #include "my-connection.h"
 #include "my-mock.h"
-#include <buffer.h>
+#include <compileTimeFormatter.h>
 
 namespace MySQL {
 
@@ -11,10 +11,11 @@ Mock::Mock(const std::string & name, const std::vector<boost::filesystem::path> 
 	PlaySchemaScripts(ss);
 }
 
+AdHocFormatter(MockConnStr, "options=p2testmysql;database=%?");
 DB::Connection *
 Mock::openConnection() const
 {
-	return new Connection(stringbf("options=p2testmysql;database=%s", testDbName));
+	return new Connection(MockConnStr::get(testDbName));
 }
 
 Mock::~Mock()

@@ -6,6 +6,7 @@
 #include <runtimeContext.h>
 #include <ucontext.h>
 #include <boost/optional.hpp>
+#include <compileTimeFormatter.h>
 
 NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory);
 
@@ -189,12 +190,12 @@ namespace MySQL {
 	};
 }
 
+AdHocFormatter(MySQLConnectionLoadData, "LOAD DATA LOCAL INFILE 'any' INTO TABLE %? %?");
 void
 MySQL::Connection::beginBulkUpload(const char * table, const char * extra)
 {
-	static char buf[BUFSIZ];
-	int len = snprintf(buf, BUFSIZ, "LOAD DATA LOCAL INFILE 'any' INTO TABLE %s %s", table, extra);
-	mysql_send_query(&conn, buf, len);
+	auto sql = MySQLConnectionLoadData::get(table, extra);
+	mysql_send_query(&conn, sql.c_str(), sql.length());
 
 	ctx = boost::shared_ptr<LoadContext>(new MySQL::LoadContext(&conn));
 
