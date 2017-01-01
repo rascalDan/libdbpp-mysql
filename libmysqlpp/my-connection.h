@@ -26,8 +26,8 @@ namespace MySQL {
 			DB::BulkDeleteStyle bulkDeleteStyle() const override;
 			DB::BulkUpdateStyle bulkUpdateStyle() const override;
 
-			DB::SelectCommand * newSelectCommand(const std::string & sql) override;
-			DB::ModifyCommand * newModifyCommand(const std::string & sql) override;
+			DB::SelectCommand * newSelectCommand(const std::string & sql, const DB::CommandOptions *) override;
+			DB::ModifyCommand * newModifyCommand(const std::string & sql, const DB::CommandOptions *) override;
 
 			void	beginBulkUpload(const char *, const char *) override;
 			void	endBulkUpload(const char *) override;

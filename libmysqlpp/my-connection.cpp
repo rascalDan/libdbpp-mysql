@@ -128,13 +128,13 @@ MySQL::Connection::ping() const
 
 
 DB::SelectCommand *
-MySQL::Connection::newSelectCommand(const std::string & sql)
+MySQL::Connection::newSelectCommand(const std::string & sql, const DB::CommandOptions *)
 {
 	return new SelectCommand(this, sql);
 }
 
 DB::ModifyCommand *
-MySQL::Connection::newModifyCommand(const std::string & sql)
+MySQL::Connection::newModifyCommand(const std::string & sql, const DB::CommandOptions *)
 {
 	return new ModifyCommand(this, sql);
 }
