@@ -3,6 +3,7 @@
 
 #include <boost/optional.hpp>
 #include <string>
+#include <vector>
 #include <visibility.h>
 
 namespace MySQL {

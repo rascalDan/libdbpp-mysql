@@ -32,14 +32,14 @@ namespace MySQL {
 			auto path = mockDbPath();
 			embeddedServer = Server::getMock(path);
 			Connection initialize(embeddedServer.get(), "mysql");
-			initialize.execute("CREATE DATABASE " + dbname);
+			initialize.execute("CREATE DATABASE " + dbname, NULL);
 		}
 
 		void
 		Mock::DropDatabase() const
 		{
 			Connection initialize(embeddedServer.get(), "mysql");
-			initialize.execute("DROP DATABASE " + dbname);
+			initialize.execute("DROP DATABASE " + dbname, NULL);
 		}
 
 		boost::filesystem::path

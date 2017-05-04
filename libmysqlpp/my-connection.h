@@ -35,7 +35,7 @@ namespace MySQL {
 			size_t bulkUploadData(const char *, size_t) const override;
 
 			int64_t insertId() override;
-			void execute(const std::string &) override;
+			void execute(const std::string &, const DB::CommandOptions *) override;
 
 			mutable MYSQL conn;
 

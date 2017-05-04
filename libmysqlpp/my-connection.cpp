@@ -125,7 +125,7 @@ MySQL::Connection::newModifyCommand(const std::string & sql, const DB::CommandOp
 }
 
 void
-MySQL::Connection::execute(const std::string & sql)
+MySQL::Connection::execute(const std::string & sql, const DB::CommandOptions *)
 {
 	if (mysql_query(&conn, sql.c_str())) {
 		throw Error(&conn);
