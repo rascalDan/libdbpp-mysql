@@ -127,16 +127,16 @@ MySQL::Connection::ping() const
 }
 
 
-DB::SelectCommand *
-MySQL::Connection::newSelectCommand(const std::string & sql, const DB::CommandOptions *)
+DB::SelectCommandPtr
+MySQL::Connection::select(const std::string & sql, const DB::CommandOptionsCPtr &)
 {
-	return new SelectCommand(this, sql);
+	return std::make_shared<SelectCommand>(this, sql);
 }
 
-DB::ModifyCommand *
-MySQL::Connection::newModifyCommand(const std::string & sql, const DB::CommandOptions *)
+DB::ModifyCommandPtr
+MySQL::Connection::modify(const std::string & sql, const DB::CommandOptionsCPtr &)
 {
-	return new ModifyCommand(this, sql);
+	return std::make_shared<ModifyCommand>(this, sql);
 }
 
 namespace MySQL {

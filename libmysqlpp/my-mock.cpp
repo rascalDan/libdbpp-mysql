@@ -13,16 +13,11 @@ Mock::Mock(const std::string & master, const std::string & name, const std::vect
 	PlaySchemaScripts(ss);
 }
 
-Mock::Mock(const std::string & name, const std::vector<boost::filesystem::path> & ss) :
-	Mock("options=p2testmysql", name, ss)
-{
-}
-
 AdHocFormatter(MockConnStr, "options=p2testmysql;database=%?");
-DB::Connection *
+DB::ConnectionPtr
 Mock::openConnection() const
 {
-	return new Connection(MockConnStr::get(testDbName));
+	return std::make_shared<Connection>(MockConnStr::get(testDbName));
 }
 
 Mock::~Mock()

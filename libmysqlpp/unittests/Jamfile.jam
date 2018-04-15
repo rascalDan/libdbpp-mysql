@@ -14,6 +14,7 @@ run
 	<define>BOOST_TEST_DYN_LINK
 	<library>..//dbpp-mysql
 	<library>dbpptestcore
+	<library>..//adhocutil
 	<library>boost_utf
 	<library>boost_system
 	<library>boost_filesystem

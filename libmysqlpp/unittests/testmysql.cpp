@@ -12,9 +12,9 @@
 #include <fstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-class StandardMockDatabase : public MySQL::Mock {
+class StandardMockDatabase : public DB::PluginMock<MySQL::Mock> {
 	public:
-		StandardMockDatabase() : MySQL::Mock("mysqlmock", {
+		StandardMockDatabase() : DB::PluginMock<MySQL::Mock>("options=p2testmysql", "mysqlmock", {
 				rootDir / "mysqlschema.sql" })
 		{
 		}
@@ -38,15 +38,13 @@ BOOST_AUTO_TEST_CASE( transactions )
 	BOOST_REQUIRE_EQUAL(true, ro->inTx());
 	ro->commitTx();
 	BOOST_REQUIRE_EQUAL(false, ro->inTx());
-
-	delete ro;
 }
 
 BOOST_AUTO_TEST_CASE( bindAndSend )
 {
 	auto rw = DB::MockDatabase::openConnectionTo("mysqlmock");
 
-	auto mod = rw->newModifyCommand("INSERT INTO test VALUES(?, ?, ?, ?, ?, ?)");
+	auto mod = rw->modify("INSERT INTO test VALUES(?, ?, ?, ?, ?, ?)");
 	mod->bindParamI(0, testInt);
 	mod->bindParamF(1, testDouble);
 	mod->bindParamS(2, testString);
@@ -54,15 +52,13 @@ BOOST_AUTO_TEST_CASE( bindAndSend )
 	mod->bindParamT(4, testDateTime);
 	mod->bindParamT(5, testInterval);
 	mod->execute();
-	delete mod;
-	delete rw;
 }
 
 BOOST_AUTO_TEST_CASE( bindAndSelect )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
-	auto select = ro->newSelectCommand("SELECT * FROM test WHERE id = ?");
+	auto select = ro->select("SELECT * FROM test WHERE id = ?");
 	select->bindParamI(0, testInt);
 	select->execute();
 	int rows = 0;
@@ -75,16 +71,14 @@ BOOST_AUTO_TEST_CASE( bindAndSelect )
 		assertColumnValueHelper(*select, 5, testInterval);
 		rows += 1;
 	}
-	delete select;
 	BOOST_REQUIRE_EQUAL(1, rows);
-	delete ro;
 }
 
 BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
-	auto select = ro->newSelectCommand("SELECT * FROM test WHERE id != ?");
+	auto select = ro->select("SELECT * FROM test WHERE id != ?");
 	select->bindParamI(0, testInt);
 	select->execute();
 	int rows = 0;
@@ -97,16 +91,14 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 		assertColumnValueHelper(*select, 5, boost::posix_time::time_duration(38, 13, 12));
 		rows += 1;
 	}
-	delete select;
 	BOOST_REQUIRE_EQUAL(1, rows);
-	delete ro;
 }
 
 BOOST_AUTO_TEST_CASE( bulkload )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
-	auto count = ro->newSelectCommand("SELECT COUNT(*) FROM bulktest");
+	auto count = ro->select("SELECT COUNT(*) FROM bulktest");
 	// Test empty
 	ro->beginBulkUpload("bulktest", "");
 	ro->endBulkUpload(NULL);
@@ -121,30 +113,24 @@ BOOST_AUTO_TEST_CASE( bulkload )
 	}
 	ro->endBulkUpload(NULL);
 	assertScalarValueHelper(*count, 800);
-
-	delete count;
-	delete ro;
 }
 
 BOOST_AUTO_TEST_CASE( bigIterate )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
-	auto count = ro->newSelectCommand("SELECT * FROM bulktest");
+	auto count = ro->select("SELECT * FROM bulktest");
 	unsigned int rows = 0;
 	while (count->fetch()) {
 		rows += 1;
 	}
 	BOOST_REQUIRE_EQUAL(800, rows);
-
-	delete count;
-	delete ro;
 }
 
 BOOST_AUTO_TEST_CASE( insertId )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
-	auto ins = ro->newModifyCommand("INSERT INTO inserts(num) VALUES(?)");
+	auto ins = ro->modify("INSERT INTO inserts(num) VALUES(?)");
 	ins->bindParamI(0, 4);
 	ins->execute();
 	BOOST_REQUIRE_EQUAL(1, ro->insertId());
@@ -154,15 +140,12 @@ BOOST_AUTO_TEST_CASE( insertId )
 	ins->bindParamI(0, -4);
 	ins->execute();
 	BOOST_REQUIRE_EQUAL(3, ro->insertId());
-	delete ins;
-	delete ro;
 }
 
 BOOST_AUTO_TEST_CASE( errors )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 	BOOST_REQUIRE_THROW(ro->execute("nonsense"), DB::Error);
-	delete ro;
 	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("mysql", "server=nohost"), DB::ConnectionError);
 }
 
