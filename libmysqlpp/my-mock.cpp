@@ -6,7 +6,7 @@ NAMEDFACTORY("mysql", MySQL::Mock, DB::MockDatabaseFactory);
 
 namespace MySQL {
 
-Mock::Mock(const std::string & master, const std::string & name, const std::vector<boost::filesystem::path> & ss) :
+Mock::Mock(const std::string & master, const std::string & name, const std::vector<std::filesystem::path> & ss) :
 	MockServerDatabase(master, name, "mysql")
 {
 	CreateNewDatabase();

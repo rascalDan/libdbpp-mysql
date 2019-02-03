@@ -4,7 +4,6 @@ lib mysqlclient : : : : <include>/usr/include/mysql ;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
 lib dbppcore : : : : <include>/usr/include/dbpp ;
 lib boost_date_time ;
-lib boost_system ;
 
 lib dbpp-mysql :
 	[ glob my-*.cpp ] :
@@ -13,7 +12,6 @@ lib dbpp-mysql :
 	<library>dbppcore
 	<library>adhocutil
 	<library>boost_date_time
-	<library>boost_system
 	: :
 	<include>.
 	<library>mysqlclient
