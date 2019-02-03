@@ -131,15 +131,14 @@ BOOST_AUTO_TEST_CASE( insertId )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 	auto ins = ro->modify("INSERT INTO inserts(num) VALUES(?)");
-	ins->bindParamI(0, 4);
-	ins->execute();
-	BOOST_REQUIRE_EQUAL(1, ro->insertId());
-	ins->bindParamI(0, 40);
-	ins->execute();
-	BOOST_REQUIRE_EQUAL(2, ro->insertId());
-	ins->bindParamI(0, -4);
-	ins->execute();
-	BOOST_REQUIRE_EQUAL(3, ro->insertId());
+	int prevId = 0;
+	for (int n : { 4, 40, -4 }) {
+		ins->bindParamI(0, n);
+		ins->execute();
+		auto id = ro->insertId();
+		BOOST_REQUIRE_GT(id, prevId);
+		prevId = id;
+	}
 }
 
 BOOST_AUTO_TEST_CASE( errors )
