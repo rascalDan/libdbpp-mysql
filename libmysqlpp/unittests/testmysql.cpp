@@ -15,7 +15,7 @@
 class StandardMockDatabase : public DB::PluginMock<MySQL::Mock> {
 	public:
 		StandardMockDatabase() : DB::PluginMock<MySQL::Mock>("mysqlmock", {
-				rootDir / "mysqlschema.sql" }, "options=p2testmysql")
+				rootDir / "mysqlschema.sql" }, "options=libdbpp")
 		{
 		}
 };

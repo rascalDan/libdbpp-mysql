@@ -13,7 +13,7 @@ Mock::Mock(const std::string & master, const std::string & name, const std::vect
 	PlaySchemaScripts(ss);
 }
 
-AdHocFormatter(MockConnStr, "options=p2testmysql;database=%?");
+AdHocFormatter(MockConnStr, "options=libdbpp;database=%?");
 DB::ConnectionPtr
 Mock::openConnection() const
 {
