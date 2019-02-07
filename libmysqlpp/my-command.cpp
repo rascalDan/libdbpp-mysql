@@ -116,10 +116,16 @@ MySQL::Command::bindParamF(unsigned int n, float v)
 void
 MySQL::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 {
+	bindParamS(n, std::string_view { s.data(), s.bytes() });
+}
+
+void
+MySQL::Command::bindParamS(unsigned int n, const std::string_view & s)
+{
 	binds[n].buffer_type = MYSQL_TYPE_STRING;
-	binds[n].buffer = realloc(binds[n].buffer, s.bytes());
-	s.copy(static_cast<char*>(binds[n].buffer), s.bytes());
-	binds[n].buffer_length = s.bytes();
+	binds[n].buffer = realloc(binds[n].buffer, s.length());
+	s.copy(static_cast<char*>(binds[n].buffer), s.length(), 0);
+	binds[n].buffer_length = s.length();
 	binds[n].is_unsigned = 0;
 }
 void

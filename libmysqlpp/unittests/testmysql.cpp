@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 	while (select->fetch()) {
 		assertColumnValueHelper(*select, 0, 4);
 		assertColumnValueHelper(*select, 1, 123.45);
-		assertColumnValueHelper(*select, 2, std::string("some text"));
+		assertColumnValueHelper(*select, 2, std::string_view("some text"));
 		assertColumnValueHelper(*select, 3, true);
 		assertColumnValueHelper(*select, 4, boost::posix_time::ptime_from_tm({ 3, 6, 23, 27, 3, 115, 0, 0, 0, 0, 0}));
 		assertColumnValueHelper(*select, 5, boost::posix_time::time_duration(38, 13, 12));

@@ -39,7 +39,7 @@ MySQL::StringColumn::apply(DB::HandleField & h) const
 		h.null();
 	}
 	else {
-		h.string(value, length);
+		h.string({ value, length });
 	}
 }
 

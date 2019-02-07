@@ -32,28 +32,28 @@ MySQL::SelectCommand::execute()
 				case MYSQL_TYPE_INT24:
 				case MYSQL_TYPE_LONGLONG:
 				case MYSQL_TYPE_YEAR:
-					insertColumn(std::make_shared<Column<int64_t, MYSQL_TYPE_LONGLONG>>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(std::make_unique<Column<int64_t, MYSQL_TYPE_LONGLONG>>(fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_DECIMAL:
 				case MYSQL_TYPE_NEWDECIMAL:
 				case MYSQL_TYPE_FLOAT:
 				case MYSQL_TYPE_DOUBLE:
-					insertColumn(std::make_shared<Column<double, MYSQL_TYPE_DOUBLE>>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(std::make_unique<Column<double, MYSQL_TYPE_DOUBLE>>(fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_TIMESTAMP:
 				case MYSQL_TYPE_DATE:
 				case MYSQL_TYPE_DATETIME:
-					insertColumn(std::make_shared<Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(std::make_unique<Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>>(fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_TIME:
-					insertColumn(std::make_shared<Column<MYSQL_TIME, MYSQL_TYPE_TIME>>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(std::make_unique<Column<MYSQL_TIME, MYSQL_TYPE_TIME>>(fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_STRING:
 				case MYSQL_TYPE_VAR_STRING:
-					insertColumn(std::make_shared<StringColumn>(fieldDefs[i].name, i, &fields[i], fieldDefs[i].length));
+					insertColumn(std::make_unique<StringColumn>(fieldDefs[i].name, i, &fields[i], fieldDefs[i].length));
 					break;
 				case MYSQL_TYPE_NULL:
-					insertColumn(std::make_shared<NullColumn>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(std::make_unique<NullColumn>(fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_BIT:
 				case MYSQL_TYPE_BLOB:
