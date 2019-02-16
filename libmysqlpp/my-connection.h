@@ -38,8 +38,6 @@ namespace MySQL {
 			mutable MYSQL conn;
 
 		private:
-			my_bool my_true;
-
 			mutable boost::shared_ptr<LoadContext> ctx;
 	};
 }
