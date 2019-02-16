@@ -10,7 +10,7 @@ namespace MySQL {
 		public:
 			Error(MYSQL_STMT *);
 			Error(MYSQL *);
-			std::string message() const throw() override;
+			std::string message() const noexcept override;
 
 		private:
 			std::string msg;

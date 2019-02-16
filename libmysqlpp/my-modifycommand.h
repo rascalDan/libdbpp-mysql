@@ -9,7 +9,6 @@ namespace MySQL {
 	class ModifyCommand : public DB::ModifyCommand, public Command {
 		public:
 			ModifyCommand(const Connection *, const std::string & sql);
-			virtual ~ModifyCommand();
 
 			unsigned int execute(bool) override;
 

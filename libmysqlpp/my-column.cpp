@@ -1,7 +1,7 @@
 #include "my-column.h"
 #include "my-selectcommand.h"
 #include "my-error.h"
-#include <string.h>
+#include <cstring>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 
 MySQL::ColumnBase::ColumnBase(const char * name, unsigned int i) :
@@ -48,7 +48,7 @@ MySQL::NullColumn::NullColumn(const char * name, unsigned int field, MYSQL_BIND 
 {
 	b->is_null = &is_null;
 	b->buffer_type = MYSQL_TYPE_NULL;
-	b->buffer = NULL;
+	b->buffer = nullptr;
 	b->buffer_length = 0;
 }
 

@@ -1,7 +1,7 @@
 #include "my-command.h"
 #include "my-connection.h"
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 MySQL::Command::Command(const Connection * conn, const std::string & sql) :
 	DB::Command(sql),
@@ -18,17 +18,17 @@ MySQL::Command::Command(const Connection * conn, const std::string & sql) :
 	binds.resize(mysql_stmt_param_count(stmt));
 	if (binds.size()) {
 		paramsNeedBinding = true;
-		for (Binds::iterator i = binds.begin(); i != binds.end(); ++i) {
-			memset(&*i, 0, sizeof(MYSQL_BIND));
-			i->buffer_type = MYSQL_TYPE_NULL;
+		for (auto & b : binds) {
+			memset(&b, 0, sizeof(MYSQL_BIND));
+			b.buffer_type = MYSQL_TYPE_NULL;
 		}
 	}
 }
 
 MySQL::Command::~Command()
 {
-	for (Binds::const_iterator i = binds.begin(); i != binds.end(); ++i) {
-		free(i->buffer);
+	for (auto & b : binds) {
+		free(b.buffer);
 	}
 	mysql_stmt_close(stmt);
 }
@@ -162,7 +162,7 @@ void
 MySQL::Command::bindNull(unsigned int n)
 {
 	binds[n].buffer_type = MYSQL_TYPE_NULL;
-	binds[n].buffer = NULL;
+	binds[n].buffer = nullptr;
 	free(binds[n].buffer);
 }
 

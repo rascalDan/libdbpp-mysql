@@ -2,7 +2,7 @@
 #include "my-connection.h"
 #include "my-column.h"
 #include "my-error.h"
-#include <string.h>
+#include <cstring>
 
 MySQL::SelectCommand::SelectCommand(const Connection * conn, const std::string & sql) :
 	DB::Command(sql),
@@ -19,8 +19,8 @@ MySQL::SelectCommand::execute()
 	if (!prepared) {
 		bindParams();
 		fields.resize(mysql_stmt_field_count(stmt));
-		for (Binds::iterator i = fields.begin(); i != fields.end(); ++i) {
-			memset(&*i, 0, sizeof(MYSQL_BIND));
+		for (auto & b : fields) {
+			memset(&b, 0, sizeof(MYSQL_BIND));
 		}
 		MYSQL_RES * prepare_meta_result = mysql_stmt_result_metadata(stmt);
 		MYSQL_FIELD * fieldDefs = mysql_fetch_fields(prepare_meta_result);

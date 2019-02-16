@@ -1,16 +1,12 @@
 #include "my-modifycommand.h"
 #include "my-error.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include "connection.h"
 
 MySQL::ModifyCommand::ModifyCommand(const Connection * conn, const std::string & sql) :
 	DB::Command(sql),
 	DB::ModifyCommand(sql),
 	MySQL::Command(conn, sql)
-{
-}
-
-MySQL::ModifyCommand::~ModifyCommand()
 {
 }
 

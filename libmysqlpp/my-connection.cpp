@@ -5,7 +5,7 @@
 #include <nvpParse.h>
 #include <runtimeContext.h>
 #include <ucontext.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <compileTimeFormatter.h>
 
 NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory);
@@ -18,7 +18,7 @@ MySQL::ConnectionError::ConnectionError(MYSQL * m) :
 class Opts {
 	public:
 		Opts() { port = 3306; }
-		typedef boost::optional<std::string> OptString;
+		using OptString = std::optional<std::string>;
 		OptString server;
 		OptString user;
 		OptString password;
@@ -34,13 +34,13 @@ operator~(const Opts::OptString & os)
 	if (os) {
 		return os->c_str();
 	}
-	return NULL;
+	return nullptr;
 }
 
 namespace std {
 	template <typename T>
 	std::istream &
-	operator>>(std::istream & s, boost::optional<T> & o)
+	operator>>(std::istream & s, std::optional<T> & o)
 	{
 		o = T();
 		return (s >> *o);
@@ -68,8 +68,8 @@ MySQL::Connection::Connection(const std::string & str)
 	if (o.options) {
 		mysql_options(&conn, MYSQL_READ_DEFAULT_GROUP, ~o.options);
 	}
-	if (mysql_real_connect(&conn, ~o.server, ~o.user, ~o.password, ~o.database,
-				o.port, ~o.unix_socket, CLIENT_LOCAL_FILES | CLIENT_MULTI_STATEMENTS) == NULL) {
+	if (!mysql_real_connect(&conn, ~o.server, ~o.user, ~o.password, ~o.database,
+				o.port, ~o.unix_socket, CLIENT_LOCAL_FILES | CLIENT_MULTI_STATEMENTS)) {
 		throw ConnectionError(&conn);
 	}
 	if (mysql_set_character_set(&conn, "utf8")) {
@@ -143,7 +143,7 @@ namespace MySQL {
 	class LoadContext : public AdHoc::System::RuntimeContext {
 		public:
 			LoadContext(MYSQL * c) :
-				loadBuf(NULL),
+				loadBuf(nullptr),
 				loadBufLen(0),
 				bufOff(0),
 				conn(c)
@@ -156,7 +156,7 @@ namespace MySQL {
 			}
 
 			static int local_infile_read(void * obj, char * buf, unsigned int bufSize) {
-				LoadContext * ctx = static_cast<LoadContext *>(obj);
+				auto ctx = static_cast<LoadContext *>(obj);
 				if (ctx->loadBufLen - ctx->bufOff == 0) {
 					ctx->swapContext();
 					if (ctx->loadBufLen - ctx->bufOff <= 0) {
@@ -208,7 +208,7 @@ MySQL::Connection::beginBulkUpload(const char * table, const char * extra)
 void
 MySQL::Connection::endBulkUpload(const char * msg)
 {
-	ctx->loadBuf = NULL;
+	ctx->loadBuf = nullptr;
 	ctx->loadBufLen = 0;
 	ctx->bufOff = msg ? -1 : 0;
 	// switch context with empty buffer fires finished
