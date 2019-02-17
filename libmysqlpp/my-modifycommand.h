@@ -14,7 +14,6 @@ namespace MySQL {
 
 		private:
 			void prepare() const;
-			mutable bool prepared;
 	};
 }
 

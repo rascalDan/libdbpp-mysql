@@ -21,11 +21,10 @@ namespace MySQL {
 	class StringColumn : public ColumnBase {
 		public:
 			StringColumn(const char * name, unsigned int field, MYSQL_BIND * b, unsigned int len);
-			~StringColumn();
 
 			void apply(DB::HandleField &) const override;
 
-			char * value;
+			std::vector<char> value;
 			long unsigned int length;
 	};
 

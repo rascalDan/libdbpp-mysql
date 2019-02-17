@@ -59,7 +59,8 @@ NvpTarget(Opts) OptsTargetMap {
 };
 
 
-MySQL::Connection::Connection(const std::string & str)
+MySQL::Connection::Connection(const std::string & str) :
+	conn({})
 {
 	std::stringstream i(str);
 	Opts o;
@@ -69,6 +70,7 @@ MySQL::Connection::Connection(const std::string & str)
 		mysql_options(&conn, MYSQL_READ_DEFAULT_GROUP, ~o.options);
 	}
 	if (!mysql_real_connect(&conn, ~o.server, ~o.user, ~o.password, ~o.database,
+				// NOLINTNEXTLINE(hicpp-signed-bitwise)
 				o.port, ~o.unix_socket, CLIENT_LOCAL_FILES | CLIENT_MULTI_STATEMENTS)) {
 		throw ConnectionError(&conn);
 	}
@@ -142,11 +144,12 @@ MySQL::Connection::modify(const std::string & sql, const DB::CommandOptionsCPtr 
 namespace MySQL {
 	class LoadContext : public AdHoc::System::RuntimeContext {
 		public:
-			LoadContext(MYSQL * c) :
+			explicit LoadContext(MYSQL * c) :
 				loadBuf(nullptr),
 				loadBufLen(0),
 				bufOff(0),
-				conn(c)
+				conn(c),
+				loadReturn(0)
 			{
 			}
 

@@ -28,6 +28,7 @@ MySQL::Command::Command(const Connection * conn, const std::string & sql) :
 MySQL::Command::~Command()
 {
 	for (auto & b : binds) {
+		// NOLINTNEXTLINE(hicpp-no-malloc)
 		free(b.buffer);
 	}
 	mysql_stmt_close(stmt);
@@ -36,6 +37,7 @@ MySQL::Command::~Command()
 void *
 MySQL::Command::realloc(void * buffer, size_t size)
 {
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	void * newBuffer = ::realloc(buffer, size);
 	if (buffer != newBuffer) {
 		paramsNeedBinding = true;
@@ -47,6 +49,7 @@ void
 MySQL::Command::bindParamI(unsigned int n, int v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_LONG;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(int));
 	*static_cast<int*>(binds[n].buffer) = v;
 	binds[n].is_unsigned = 0;
@@ -55,6 +58,7 @@ void
 MySQL::Command::bindParamI(unsigned int n, long int v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
 	*static_cast<long long int*>(binds[n].buffer) = v;
 	binds[n].is_unsigned = 0;
@@ -63,6 +67,7 @@ void
 MySQL::Command::bindParamI(unsigned int n, long long int v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
 	*static_cast<long long int*>(binds[n].buffer) = v;
 	binds[n].is_unsigned = 0;
@@ -71,6 +76,7 @@ void
 MySQL::Command::bindParamI(unsigned int n, unsigned int v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_LONG;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(int));
 	*static_cast<int*>(binds[n].buffer) = v;
 	binds[n].is_unsigned = 1;
@@ -79,6 +85,7 @@ void
 MySQL::Command::bindParamI(unsigned int n, long unsigned int v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
 	*static_cast<long long int*>(binds[n].buffer) = v;
 	binds[n].is_unsigned = 1;
@@ -87,6 +94,7 @@ void
 MySQL::Command::bindParamI(unsigned int n, long long unsigned int v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
 	*static_cast<long long int*>(binds[n].buffer) = v;
 	binds[n].is_unsigned = 1;
@@ -95,6 +103,7 @@ void
 MySQL::Command::bindParamB(unsigned int n, bool v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_TINY;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(bool));
 	*static_cast<bool*>(binds[n].buffer) = (v ? 1 : 0);
 	binds[n].is_unsigned = 1;
@@ -103,6 +112,7 @@ void
 MySQL::Command::bindParamF(unsigned int n, double v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_DOUBLE;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(double));
 	*static_cast<double*>(binds[n].buffer) = v;
 }
@@ -110,6 +120,7 @@ void
 MySQL::Command::bindParamF(unsigned int n, float v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_FLOAT;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(float));
 	*static_cast<float*>(binds[n].buffer) = v;
 }
@@ -123,6 +134,7 @@ void
 MySQL::Command::bindParamS(unsigned int n, const std::string_view & s)
 {
 	binds[n].buffer_type = MYSQL_TYPE_STRING;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, s.length());
 	s.copy(static_cast<char*>(binds[n].buffer), s.length(), 0);
 	binds[n].buffer_length = s.length();
@@ -132,6 +144,7 @@ void
 MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_DATETIME;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(MYSQL_TIME));
 	MYSQL_TIME & ts = *static_cast<MYSQL_TIME*>(binds[n].buffer);
 	ts.year = v.date().year();
@@ -147,6 +160,7 @@ void
 MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration & v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_TIME;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(MYSQL_TIME));
 	MYSQL_TIME & ts = *static_cast<MYSQL_TIME*>(binds[n].buffer);
 	ts.year = 0;
@@ -163,6 +177,7 @@ MySQL::Command::bindNull(unsigned int n)
 {
 	binds[n].buffer_type = MYSQL_TYPE_NULL;
 	binds[n].buffer = nullptr;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	free(binds[n].buffer);
 }
 

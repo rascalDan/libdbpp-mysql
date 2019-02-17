@@ -5,7 +5,9 @@
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 
 MySQL::ColumnBase::ColumnBase(const char * name, unsigned int i) :
-	DB::Column(name, i)
+	DB::Column(name, i),
+	is_null(false),
+	length(0)
 {
 }
 
@@ -17,19 +19,15 @@ MySQL::ColumnBase::isNull() const
 
 MySQL::StringColumn::StringColumn(const char * name, unsigned int field, MYSQL_BIND * b, unsigned int len) :
 	ColumnBase(name, field),
-	value(new char[len])
+	value(len),
+	length(0)
 {
 	b->is_null = &is_null;
 	b->buffer_type = MYSQL_TYPE_STRING;
 	b->is_unsigned = 0;
-	b->buffer = value;
+	b->buffer = value.data();
 	b->buffer_length = len;
 	b->length = &length;
-}
-
-MySQL::StringColumn::~StringColumn()
-{
-	delete[] value;
 }
 
 void
@@ -39,7 +37,7 @@ MySQL::StringColumn::apply(DB::HandleField & h) const
 		h.null();
 	}
 	else {
-		h.string({ value, length });
+		h.string({ value.data(), length });
 	}
 }
 
