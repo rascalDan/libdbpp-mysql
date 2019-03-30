@@ -2,6 +2,7 @@
 #include "my-connection.h"
 #include <cstdlib>
 #include <cstring>
+#include <boost/numeric/conversion/cast.hpp>
 
 MySQL::Command::Command(const Connection * conn, const std::string & sql) :
 	DB::Command(sql),
@@ -45,84 +46,61 @@ MySQL::Command::realloc(void * buffer, size_t size)
 	return newBuffer;
 }
 
+template<typename B, enum_field_types b, typename P>
+void
+bindNumber(MYSQL_BIND & bind, const P & v)
+{
+	bind.buffer_type = b;
+	// NOLINTNEXTLINE(hicpp-no-malloc)
+	bind.buffer = realloc(bind.buffer, sizeof(B));
+	*static_cast<B *>(bind.buffer) = boost::numeric_cast<B>(v);
+	bind.is_unsigned = std::is_unsigned<P>::value;
+}
+
 void
 MySQL::Command::bindParamI(unsigned int n, int v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_LONG;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(int));
-	*static_cast<int*>(binds[n].buffer) = v;
-	binds[n].is_unsigned = 0;
+	bindNumber<int, MYSQL_TYPE_LONG>(binds[n], v);
 }
 void
 MySQL::Command::bindParamI(unsigned int n, long int v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
-	*static_cast<long long int*>(binds[n].buffer) = v;
-	binds[n].is_unsigned = 0;
+	bindNumber<long long int, MYSQL_TYPE_LONGLONG>(binds[n], v);
 }
 void
 MySQL::Command::bindParamI(unsigned int n, long long int v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
-	*static_cast<long long int*>(binds[n].buffer) = v;
-	binds[n].is_unsigned = 0;
+	bindNumber<long long int, MYSQL_TYPE_LONGLONG>(binds[n], v);
 }
 void
 MySQL::Command::bindParamI(unsigned int n, unsigned int v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_LONG;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(int));
-	*static_cast<int*>(binds[n].buffer) = v;
-	binds[n].is_unsigned = 1;
+	bindNumber<int, MYSQL_TYPE_LONG>(binds[n], v);
 }
 void
 MySQL::Command::bindParamI(unsigned int n, long unsigned int v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
-	*static_cast<long long int*>(binds[n].buffer) = v;
-	binds[n].is_unsigned = 1;
+	bindNumber<long long int, MYSQL_TYPE_LONGLONG>(binds[n], v);
 }
 void
 MySQL::Command::bindParamI(unsigned int n, long long unsigned int v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_LONGLONG;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(long long int));
-	*static_cast<long long int*>(binds[n].buffer) = v;
-	binds[n].is_unsigned = 1;
+	bindNumber<long long int, MYSQL_TYPE_LONGLONG>(binds[n], v);
 }
 void
 MySQL::Command::bindParamB(unsigned int n, bool v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_TINY;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(bool));
-	*static_cast<bool*>(binds[n].buffer) = (v ? 1 : 0);
-	binds[n].is_unsigned = 1;
+	bindNumber<char, MYSQL_TYPE_TINY>(binds[n], (v ? 1 : 0));
 }
 void
 MySQL::Command::bindParamF(unsigned int n, double v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_DOUBLE;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(double));
-	*static_cast<double*>(binds[n].buffer) = v;
+	bindNumber<double, MYSQL_TYPE_DOUBLE>(binds[n], v);
 }
 void
 MySQL::Command::bindParamF(unsigned int n, float v)
 {
-	binds[n].buffer_type = MYSQL_TYPE_FLOAT;
-	// NOLINTNEXTLINE(hicpp-no-malloc)
-	binds[n].buffer = realloc(binds[n].buffer, sizeof(float));
-	*static_cast<float*>(binds[n].buffer) = v;
+	bindNumber<float, MYSQL_TYPE_FLOAT>(binds[n], v);
 }
 void
 MySQL::Command::bindParamS(unsigned int n, const Glib::ustring & s)

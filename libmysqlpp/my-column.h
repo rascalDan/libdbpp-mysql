@@ -10,7 +10,7 @@ namespace MySQL {
 		public:
 			ColumnBase(const char * name, unsigned int field);
 
-			bool isNull() const override;
+			[[nodiscard]] bool isNull() const override;
 
 		protected:
 			my_bool is_null;

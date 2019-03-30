@@ -24,7 +24,7 @@ MySQL::SelectCommand::execute()
 		}
 		MYSQL_RES * prepare_meta_result = mysql_stmt_result_metadata(stmt);
 		MYSQL_FIELD * fieldDefs = mysql_fetch_fields(prepare_meta_result);
-		for (unsigned int i = 0; i < fields.size(); i += 1) {
+		for (std::size_t i = 0; i < fields.size(); i += 1) {
 			switch (fieldDefs[i].type) {
 				case MYSQL_TYPE_TINY:
 				case MYSQL_TYPE_SHORT:

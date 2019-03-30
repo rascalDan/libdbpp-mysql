@@ -167,7 +167,7 @@ namespace MySQL {
 						return ctx->bufOff;
 					}
 				}
-				unsigned int copy = std::min(ctx->loadBufLen - ctx->bufOff, bufSize);
+				auto copy = std::min<size_t>(ctx->loadBufLen - ctx->bufOff, bufSize);
 				memcpy(buf, ctx->loadBuf + ctx->bufOff, copy);
 				ctx->bufOff += copy;
 				return copy;
@@ -186,8 +186,8 @@ namespace MySQL {
 			}
 
 			const char * loadBuf;
-			unsigned int loadBufLen;
-			int bufOff;
+			size_t loadBufLen;
+			size_t bufOff;
 			MYSQL * conn;
 			int loadReturn;
 	};
