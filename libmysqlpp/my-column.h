@@ -13,7 +13,7 @@ namespace MySQL {
 			[[nodiscard]] bool isNull() const override;
 
 		protected:
-			my_bool is_null;
+			bool is_null;
 			long unsigned int length;
 			friend class SelectCommand;
 	};
