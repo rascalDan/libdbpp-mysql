@@ -1,6 +1,5 @@
 import package ;
 
-lib mysqlclient : : : : <include>/usr/include/mysql ;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
 lib dbppcore : : : : <include>/usr/include/dbpp ;
 lib boost_date_time ;
@@ -8,13 +7,13 @@ lib boost_date_time ;
 lib dbpp-mysql :
 	[ glob my-*.cpp ] :
 	<library>..//glibmm
-	<library>mysqlclient
+	<library>..//mysqlclient
 	<library>dbppcore
 	<library>adhocutil
 	<library>boost_date_time
 	: :
 	<include>.
-	<library>mysqlclient
+	<library>..//mysqlclient
 	<library>..//glibmm
 	<library>dbppcore
 	;

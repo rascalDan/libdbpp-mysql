@@ -4,7 +4,7 @@
 #include <connection.h>
 #include "my-error.h"
 #include <mysql.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace MySQL {
 	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {
@@ -38,7 +38,7 @@ namespace MySQL {
 			mutable MYSQL conn;
 
 		private:
-			mutable boost::shared_ptr<LoadContext> ctx;
+			mutable std::unique_ptr<LoadContext> ctx;
 	};
 }
 

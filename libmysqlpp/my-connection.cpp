@@ -200,7 +200,7 @@ MySQL::Connection::beginBulkUpload(const char * table, const char * extra)
 	auto sql = MySQLConnectionLoadData::get(table, extra);
 	mysql_send_query(&conn, sql.c_str(), sql.length());
 
-	ctx = boost::shared_ptr<LoadContext>(new MySQL::LoadContext(&conn));
+	ctx = std::make_unique<LoadContext>(&conn);
 
 	mysql_set_local_infile_handler(&conn, LoadContext::local_infile_init, LoadContext::local_infile_read,
 			LoadContext::local_infile_end, LoadContext::local_infile_error, ctx.get());
