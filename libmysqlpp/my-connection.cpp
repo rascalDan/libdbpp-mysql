@@ -87,7 +87,7 @@ MySQL::Connection::~Connection()
 void
 MySQL::Connection::beginTxInt()
 {
-	if (mysql_autocommit(&conn, 0)) {
+	if (mysql_autocommit(&conn, false)) {
 		throw Error(&conn);
 	}
 }

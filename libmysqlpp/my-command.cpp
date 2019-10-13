@@ -116,7 +116,7 @@ MySQL::Command::bindParamS(unsigned int n, const std::string_view & s)
 	binds[n].buffer = realloc(binds[n].buffer, s.length());
 	s.copy(static_cast<char*>(binds[n].buffer), s.length(), 0);
 	binds[n].buffer_length = s.length();
-	binds[n].is_unsigned = 0;
+	binds[n].is_unsigned = false;
 }
 void
 MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
@@ -132,7 +132,7 @@ MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 	ts.minute = v.time_of_day().minutes();
 	ts.second = v.time_of_day().seconds();
 	ts.second_part = v.time_of_day().total_microseconds() % 1000000;
-	ts.neg = 0;
+	ts.neg = false;
 }
 void
 MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration & v)

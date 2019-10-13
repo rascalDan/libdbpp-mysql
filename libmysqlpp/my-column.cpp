@@ -24,7 +24,7 @@ MySQL::StringColumn::StringColumn(const char * name, unsigned int field, MYSQL_B
 {
 	b->is_null = &is_null;
 	b->buffer_type = MYSQL_TYPE_STRING;
-	b->is_unsigned = 0;
+	b->is_unsigned = false;
 	b->buffer = value.data();
 	b->buffer_length = len;
 	b->length = &length;
@@ -62,7 +62,7 @@ namespace MySQL {
 	{
 		b->is_null = &is_null;
 		b->buffer_type = MT;
-		b->is_unsigned = 0;
+		b->is_unsigned = false;
 		b->buffer = &value;
 		b->buffer_length = sizeof(T);
 	}
