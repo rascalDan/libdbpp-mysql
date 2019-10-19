@@ -18,6 +18,7 @@ run
 	<library>boost_utf
 	<library>stdc++fs
 	<dependency>mysqlschema.sql
+	<toolset>tidy:<xcheckxx>hicpp-vararg
 	:
 	testmysql
 	;

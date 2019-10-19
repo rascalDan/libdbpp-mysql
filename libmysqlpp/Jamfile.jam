@@ -18,6 +18,7 @@ project
 			<variant>debug:<warnings>extra
 			<variant>debug:<warnings-as-errors>on
 			<variant>coverage:<coverage>on
+			<toolset>tidy:<xcheckxx>misc-non-private-member-variables-in-classes
 	;
 
 lib dbpp-mysql :
