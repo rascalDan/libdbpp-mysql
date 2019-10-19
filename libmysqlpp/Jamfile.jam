@@ -1,21 +1,39 @@
 import package ;
+import pkg-config ;
 
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
 lib dbppcore : : : : <include>/usr/include/dbpp ;
 lib boost_date_time ;
 
+pkg-config.import glibmm : : <name>glibmm-2.4 ;
+pkg-config.import mysqlclient ;
+
+project
+  : requirements
+			<cxxstd>17
+			<visibility>hidden
+      <linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
+      <variant>release:<cxxflags>"-flto=2"
+      <variant>release:<linkflags>"-flto=2"
+			<variant>debug:<warnings>extra
+			<variant>debug:<warnings-as-errors>on
+			<variant>coverage:<coverage>on
+	;
+
 lib dbpp-mysql :
 	[ glob my-*.cpp ] :
-	<library>..//glibmm
-	<library>..//mysqlclient
-	<library>dbppcore
+	<library>glibmm
+	<library>mysqlclient
+	<local-dbppcore>yes:<library>../..//dbppcore
+	<local-dbppcore>no:<library>dbppcore
 	<library>adhocutil
 	<library>boost_date_time
 	: :
 	<include>.
-	<library>..//mysqlclient
-	<library>..//glibmm
-	<library>dbppcore
+	<library>mysqlclient
+	<library>glibmm
+	<local-dbppcore>yes:<library>../..//dbppcore
+	<local-dbppcore>no:<library>dbppcore
 	;
 
 build-project unittests ;

@@ -12,7 +12,8 @@ run
 	<define>ROOT=\"$(me)\"
 	<define>BOOST_TEST_DYN_LINK
 	<library>..//dbpp-mysql
-	<library>dbpptestcore
+	<local-dbppcore>yes:<library>../../..//dbpptestcore
+	<local-dbppcore>no:<library>dbpptestcore
 	<library>..//adhocutil
 	<library>boost_utf
 	<library>stdc++fs
