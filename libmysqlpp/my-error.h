@@ -8,8 +8,8 @@
 namespace MySQL {
 	class Error : public AdHoc::Exception<DB::Error> {
 		public:
-			Error(MYSQL_STMT *);
-			Error(MYSQL *);
+			explicit Error(MYSQL_STMT *);
+			explicit Error(MYSQL *);
 			std::string message() const noexcept override;
 
 		private:

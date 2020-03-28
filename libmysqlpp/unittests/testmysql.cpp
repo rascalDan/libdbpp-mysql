@@ -147,7 +147,9 @@ BOOST_AUTO_TEST_CASE( errors )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 	BOOST_REQUIRE_THROW(ro->execute("nonsense"), DB::Error);
-	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("mysql", "server=nohost"), DB::ConnectionError);
+	BOOST_REQUIRE_THROW(
+			(void)DB::ConnectionFactory::createNew("mysql", "server=nohost"),
+			DB::ConnectionError);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
