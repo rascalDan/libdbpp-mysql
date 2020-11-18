@@ -1,30 +1,29 @@
 #define BOOST_TEST_MODULE TestMySQL
 #include <boost/test/unit_test.hpp>
 
-#include <my-mock.h>
-#include <my-error.h>
-#include <definedDirs.h>
-#include <modifycommand.h>
-#include <selectcommand.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <column.h>
 #include <connection.h>
-#include <testCore.h>
+#include <definedDirs.h>
 #include <fstream>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <modifycommand.h>
+#include <my-error.h>
+#include <my-mock.h>
+#include <selectcommand.h>
+#include <testCore.h>
 
 class StandardMockDatabase : public DB::PluginMock<MySQL::Mock> {
-	public:
-		StandardMockDatabase() : DB::PluginMock<MySQL::Mock>("mysqlmock", {
-				rootDir / "mysqlschema.sql" }, "options=libdbpp")
-		{
-		}
+public:
+	StandardMockDatabase() : DB::PluginMock<MySQL::Mock>("mysqlmock", {rootDir / "mysqlschema.sql"}, "options=libdbpp")
+	{
+	}
 };
 
-BOOST_GLOBAL_FIXTURE( StandardMockDatabase );
+BOOST_GLOBAL_FIXTURE(StandardMockDatabase);
 
-BOOST_FIXTURE_TEST_SUITE( Core, DB::TestCore );
+BOOST_FIXTURE_TEST_SUITE(Core, DB::TestCore);
 
-BOOST_AUTO_TEST_CASE( transactions )
+BOOST_AUTO_TEST_CASE(transactions)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
@@ -40,7 +39,7 @@ BOOST_AUTO_TEST_CASE( transactions )
 	BOOST_REQUIRE_EQUAL(false, ro->inTx());
 }
 
-BOOST_AUTO_TEST_CASE( bindAndSend )
+BOOST_AUTO_TEST_CASE(bindAndSend)
 {
 	auto rw = DB::MockDatabase::openConnectionTo("mysqlmock");
 
@@ -54,7 +53,7 @@ BOOST_AUTO_TEST_CASE( bindAndSend )
 	mod->execute();
 }
 
-BOOST_AUTO_TEST_CASE( bindAndSelect )
+BOOST_AUTO_TEST_CASE(bindAndSelect)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
@@ -74,7 +73,7 @@ BOOST_AUTO_TEST_CASE( bindAndSelect )
 	BOOST_REQUIRE_EQUAL(1, rows);
 }
 
-BOOST_AUTO_TEST_CASE( bindAndSelectOther )
+BOOST_AUTO_TEST_CASE(bindAndSelectOther)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
@@ -87,14 +86,15 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 		assertColumnValueHelper(*select, 1, 123.45);
 		assertColumnValueHelper(*select, 2, std::string_view("some text"));
 		assertColumnValueHelper(*select, 3, true);
-		assertColumnValueHelper(*select, 4, boost::posix_time::ptime_from_tm({ 3, 6, 23, 27, 3, 115, 0, 0, 0, 0, nullptr}));
+		assertColumnValueHelper(
+				*select, 4, boost::posix_time::ptime_from_tm({3, 6, 23, 27, 3, 115, 0, 0, 0, 0, nullptr}));
 		assertColumnValueHelper(*select, 5, boost::posix_time::time_duration(38, 13, 12));
 		rows += 1;
 	}
 	BOOST_REQUIRE_EQUAL(1, rows);
 }
 
-BOOST_AUTO_TEST_CASE( bulkload )
+BOOST_AUTO_TEST_CASE(bulkload)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
@@ -110,14 +110,14 @@ BOOST_AUTO_TEST_CASE( bulkload )
 		throw std::runtime_error("Couldn't open bulk.sample");
 	}
 	std::array<char, BUFSIZ> buf {};
-	for (std::streamsize r; (r = in.readsome(buf.data(), buf.size())) > 0; ) {
+	for (std::streamsize r; (r = in.readsome(buf.data(), buf.size())) > 0;) {
 		ro->bulkUploadData(buf.data(), r);
 	}
 	ro->endBulkUpload(nullptr);
 	assertScalarValueHelper(*count, 800);
 }
 
-BOOST_AUTO_TEST_CASE( bigIterate )
+BOOST_AUTO_TEST_CASE(bigIterate)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 
@@ -129,12 +129,12 @@ BOOST_AUTO_TEST_CASE( bigIterate )
 	BOOST_REQUIRE_EQUAL(800, rows);
 }
 
-BOOST_AUTO_TEST_CASE( insertId )
+BOOST_AUTO_TEST_CASE(insertId)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 	auto ins = ro->modify("INSERT INTO inserts(num) VALUES(?)");
 	int prevId = 0;
-	for (int n : { 4, 40, -4 }) {
+	for (int n : {4, 40, -4}) {
 		ins->bindParamI(0, n);
 		ins->execute();
 		auto id = ro->insertId();
@@ -143,14 +143,11 @@ BOOST_AUTO_TEST_CASE( insertId )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( errors )
+BOOST_AUTO_TEST_CASE(errors)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 	BOOST_REQUIRE_THROW(ro->execute("nonsense"), DB::Error);
-	BOOST_REQUIRE_THROW(
-			(void)DB::ConnectionFactory::createNew("mysql", "server=nohost"),
-			DB::ConnectionError);
+	BOOST_REQUIRE_THROW((void)DB::ConnectionFactory::createNew("mysql", "server=nohost"), DB::ConnectionError);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-

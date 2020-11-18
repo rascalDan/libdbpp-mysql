@@ -1,31 +1,31 @@
 #include "my-connection.h"
 #include "my-error.h"
-#include "my-selectcommand.h"
 #include "my-modifycommand.h"
+#include "my-selectcommand.h"
+#include <compileTimeFormatter.h>
 #include <nvpParse.h>
+#include <optional>
 #include <runtimeContext.h>
 #include <ucontext.h>
-#include <optional>
-#include <compileTimeFormatter.h>
 
 NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory);
 
-MySQL::ConnectionError::ConnectionError(MYSQL * m) :
-	MySQL::Error(m)
-{
-}
+MySQL::ConnectionError::ConnectionError(MYSQL * m) : MySQL::Error(m) { }
 
 class Opts {
-	public:
-		Opts() { port = 3306; }
-		using OptString = std::optional<std::string>;
-		OptString server;
-		OptString user;
-		OptString password;
-		OptString database;
-		unsigned int port;
-		OptString unix_socket;
-		OptString options;
+public:
+	Opts()
+	{
+		port = 3306;
+	}
+	using OptString = std::optional<std::string>;
+	OptString server;
+	OptString user;
+	OptString password;
+	OptString database;
+	unsigned int port;
+	OptString unix_socket;
+	OptString options;
 };
 
 const char *
@@ -38,7 +38,7 @@ operator~(const Opts::OptString & os)
 }
 
 namespace std {
-	template <typename T>
+	template<typename T>
 	std::istream &
 	operator>>(std::istream & s, std::optional<T> & o)
 	{
@@ -49,18 +49,16 @@ namespace std {
 
 using namespace AdHoc;
 NvpTarget(Opts) OptsTargetMap {
-	NvpValue(Opts, server),
-	NvpValue(Opts, user),
-	NvpValue(Opts, password),
-	NvpValue(Opts, database),
-	NvpValue(Opts, unix_socket),
-	NvpValue(Opts, port),
-	NvpValue(Opts, options),
+		NvpValue(Opts, server),
+		NvpValue(Opts, user),
+		NvpValue(Opts, password),
+		NvpValue(Opts, database),
+		NvpValue(Opts, unix_socket),
+		NvpValue(Opts, port),
+		NvpValue(Opts, options),
 };
 
-
-MySQL::Connection::Connection(const std::string & str) :
-	conn({})
+MySQL::Connection::Connection(const std::string & str) : conn({})
 {
 	std::stringstream i(str);
 	Opts o;
@@ -128,7 +126,6 @@ MySQL::Connection::ping() const
 	}
 }
 
-
 DB::SelectCommandPtr
 MySQL::Connection::select(const std::string & sql, const DB::CommandOptionsCPtr &)
 {
@@ -143,53 +140,55 @@ MySQL::Connection::modify(const std::string & sql, const DB::CommandOptionsCPtr 
 
 namespace MySQL {
 	class LoadContext : public AdHoc::System::RuntimeContext {
-		public:
-			explicit LoadContext(MYSQL * c) :
-				loadBuf(nullptr),
-				loadBufLen(0),
-				bufOff(0),
-				conn(c),
-				loadReturn(0)
-			{
-			}
+	public:
+		explicit LoadContext(MYSQL * c) : loadBuf(nullptr), loadBufLen(0), bufOff(0), conn(c), loadReturn(0) { }
 
-			static int local_infile_init(void ** ptr, const char *, void * ctx) {
-				*ptr = ctx;
-				return 0;
-			}
+		static int
+		local_infile_init(void ** ptr, const char *, void * ctx)
+		{
+			*ptr = ctx;
+			return 0;
+		}
 
-			static int local_infile_read(void * obj, char * buf, unsigned int bufSize) {
-				auto ctx = static_cast<LoadContext *>(obj);
-				if (ctx->loadBufLen - ctx->bufOff == 0) {
-					ctx->swapContext();
-					if (ctx->loadBufLen - ctx->bufOff <= 0) {
-						// Nothing to do or error
-						return ctx->bufOff;
-					}
+		static int
+		local_infile_read(void * obj, char * buf, unsigned int bufSize)
+		{
+			auto ctx = static_cast<LoadContext *>(obj);
+			if (ctx->loadBufLen - ctx->bufOff == 0) {
+				ctx->swapContext();
+				if (ctx->loadBufLen - ctx->bufOff <= 0) {
+					// Nothing to do or error
+					return ctx->bufOff;
 				}
-				auto copy = std::min<size_t>(ctx->loadBufLen - ctx->bufOff, bufSize);
-				memcpy(buf, ctx->loadBuf + ctx->bufOff, copy);
-				ctx->bufOff += copy;
-				return copy;
 			}
+			auto copy = std::min<size_t>(ctx->loadBufLen - ctx->bufOff, bufSize);
+			memcpy(buf, ctx->loadBuf + ctx->bufOff, copy);
+			ctx->bufOff += copy;
+			return copy;
+		}
 
-			static void local_infile_end(void *) {
-			}
+		static void
+		local_infile_end(void *)
+		{
+		}
 
-			static int local_infile_error(void *, char*, unsigned int) {
-				return 0;
-			}
+		static int
+		local_infile_error(void *, char *, unsigned int)
+		{
+			return 0;
+		}
 
-			void callback() override
-			{
-				loadReturn = mysql_read_query_result(conn);
-			}
+		void
+		callback() override
+		{
+			loadReturn = mysql_read_query_result(conn);
+		}
 
-			const char * loadBuf;
-			size_t loadBufLen;
-			size_t bufOff;
-			MYSQL * conn;
-			int loadReturn;
+		const char * loadBuf;
+		size_t loadBufLen;
+		size_t bufOff;
+		MYSQL * conn;
+		int loadReturn;
 	};
 }
 
@@ -242,4 +241,3 @@ MySQL::Connection::insertId()
 {
 	return mysql_insert_id(&conn);
 }
-

@@ -1,15 +1,10 @@
 #include "my-column.h"
-#include "my-selectcommand.h"
 #include "my-error.h"
-#include <cstring>
+#include "my-selectcommand.h"
 #include <boost/date_time/gregorian/gregorian_types.hpp>
+#include <cstring>
 
-MySQL::ColumnBase::ColumnBase(const char * name, unsigned int i) :
-	DB::Column(name, i),
-	is_null(false),
-	length(0)
-{
-}
+MySQL::ColumnBase::ColumnBase(const char * name, unsigned int i) : DB::Column(name, i), is_null(false), length(0) { }
 
 bool
 MySQL::ColumnBase::isNull() const
@@ -18,9 +13,7 @@ MySQL::ColumnBase::isNull() const
 }
 
 MySQL::StringColumn::StringColumn(const char * name, unsigned int field, MYSQL_BIND * b, unsigned int len) :
-	ColumnBase(name, field),
-	value(len),
-	length(0)
+	ColumnBase(name, field), value(len), length(0)
 {
 	b->is_null = &is_null;
 	b->buffer_type = MYSQL_TYPE_STRING;
@@ -37,12 +30,11 @@ MySQL::StringColumn::apply(DB::HandleField & h) const
 		h.null();
 	}
 	else {
-		h.string({ value.data(), length });
+		h.string({value.data(), length});
 	}
 }
 
-MySQL::NullColumn::NullColumn(const char * name, unsigned int field, MYSQL_BIND * b) :
-	ColumnBase(name, field)
+MySQL::NullColumn::NullColumn(const char * name, unsigned int field, MYSQL_BIND * b) : ColumnBase(name, field)
 {
 	b->is_null = &is_null;
 	b->buffer_type = MYSQL_TYPE_NULL;
@@ -57,8 +49,8 @@ MySQL::NullColumn::apply(DB::HandleField & h) const
 }
 
 namespace MySQL {
-	template <class T, enum_field_types MT> Column<T, MT>::Column(const char * name, unsigned int field, MYSQL_BIND * b) :
-		ColumnBase(name, field)
+	template<class T, enum_field_types MT>
+	Column<T, MT>::Column(const char * name, unsigned int field, MYSQL_BIND * b) : ColumnBase(name, field)
 	{
 		b->is_null = &is_null;
 		b->buffer_type = MT;
@@ -67,7 +59,9 @@ namespace MySQL {
 		b->buffer_length = sizeof(T);
 	}
 
-	template <> void Column<int64_t, MYSQL_TYPE_LONGLONG>::apply(DB::HandleField & h) const
+	template<>
+	void
+	Column<int64_t, MYSQL_TYPE_LONGLONG>::apply(DB::HandleField & h) const
 	{
 		if (is_null) {
 			h.null();
@@ -76,7 +70,9 @@ namespace MySQL {
 			h.integer(value);
 		}
 	}
-	template <> void Column<double, MYSQL_TYPE_DOUBLE>::apply(DB::HandleField & h) const
+	template<>
+	void
+	Column<double, MYSQL_TYPE_DOUBLE>::apply(DB::HandleField & h) const
 	{
 		if (is_null) {
 			h.null();
@@ -85,25 +81,29 @@ namespace MySQL {
 			h.floatingpoint(value);
 		}
 	}
-	template <> void Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>::apply(DB::HandleField & h) const
+	template<>
+	void
+	Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>::apply(DB::HandleField & h) const
 	{
 		if (is_null) {
 			h.null();
 		}
 		else {
-			h.timestamp(boost::posix_time::ptime(
-						boost::gregorian::date(value.year, value.month, value.day),
-						boost::posix_time::time_duration(value.hour, value.minute, value.second) + boost::posix_time::microseconds(value.second_part)));
+			h.timestamp(boost::posix_time::ptime(boost::gregorian::date(value.year, value.month, value.day),
+					boost::posix_time::time_duration(value.hour, value.minute, value.second)
+							+ boost::posix_time::microseconds(value.second_part)));
 		}
 	}
-	template <> void Column<MYSQL_TIME, MYSQL_TYPE_TIME>::apply(DB::HandleField & h) const
+	template<>
+	void
+	Column<MYSQL_TIME, MYSQL_TYPE_TIME>::apply(DB::HandleField & h) const
 	{
 		if (is_null) {
 			h.null();
 		}
 		else {
-			h.interval(
-						boost::posix_time::time_duration(value.hour, value.minute, value.second) + boost::posix_time::microseconds(value.second_part));
+			h.interval(boost::posix_time::time_duration(value.hour, value.minute, value.second)
+					+ boost::posix_time::microseconds(value.second_part));
 		}
 	}
 

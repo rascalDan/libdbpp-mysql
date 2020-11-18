@@ -1,15 +1,11 @@
 #include "my-selectcommand.h"
-#include "my-connection.h"
 #include "my-column.h"
+#include "my-connection.h"
 #include "my-error.h"
 #include <cstring>
 
 MySQL::SelectCommand::SelectCommand(const Connection * conn, const std::string & sql) :
-	DB::Command(sql),
-	DB::SelectCommand(sql),
-	MySQL::Command(conn, sql),
-	prepared(false),
-	executed(false)
+	DB::Command(sql), DB::SelectCommand(sql), MySQL::Command(conn, sql), prepared(false), executed(false)
 {
 }
 
@@ -32,7 +28,8 @@ MySQL::SelectCommand::execute()
 				case MYSQL_TYPE_INT24:
 				case MYSQL_TYPE_LONGLONG:
 				case MYSQL_TYPE_YEAR:
-					insertColumn(std::make_unique<Column<int64_t, MYSQL_TYPE_LONGLONG>>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(
+							std::make_unique<Column<int64_t, MYSQL_TYPE_LONGLONG>>(fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_DECIMAL:
 				case MYSQL_TYPE_NEWDECIMAL:
@@ -43,10 +40,12 @@ MySQL::SelectCommand::execute()
 				case MYSQL_TYPE_TIMESTAMP:
 				case MYSQL_TYPE_DATE:
 				case MYSQL_TYPE_DATETIME:
-					insertColumn(std::make_unique<Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(std::make_unique<Column<MYSQL_TIME, MYSQL_TYPE_DATETIME>>(
+							fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_TIME:
-					insertColumn(std::make_unique<Column<MYSQL_TIME, MYSQL_TYPE_TIME>>(fieldDefs[i].name, i, &fields[i]));
+					insertColumn(
+							std::make_unique<Column<MYSQL_TIME, MYSQL_TYPE_TIME>>(fieldDefs[i].name, i, &fields[i]));
 					break;
 				case MYSQL_TYPE_STRING:
 				case MYSQL_TYPE_VAR_STRING:
@@ -96,4 +95,3 @@ MySQL::SelectCommand::fetch()
 			throw Error(stmt);
 	}
 }
-

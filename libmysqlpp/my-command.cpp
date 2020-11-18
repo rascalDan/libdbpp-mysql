@@ -1,14 +1,11 @@
 #include "my-command.h"
 #include "my-connection.h"
+#include <boost/numeric/conversion/cast.hpp>
 #include <cstdlib>
 #include <cstring>
-#include <boost/numeric/conversion/cast.hpp>
 
 MySQL::Command::Command(const Connection * conn, const std::string & sql) :
-	DB::Command(sql),
-	c(conn),
-	stmt(mysql_stmt_init(&conn->conn)),
-	paramsNeedBinding(false)
+	DB::Command(sql), c(conn), stmt(mysql_stmt_init(&conn->conn)), paramsNeedBinding(false)
 {
 	if (!stmt) {
 		throw Error(&conn->conn);
@@ -105,7 +102,7 @@ MySQL::Command::bindParamF(unsigned int n, float v)
 void
 MySQL::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 {
-	bindParamS(n, std::string_view { s.data(), s.bytes() });
+	bindParamS(n, std::string_view {s.data(), s.bytes()});
 }
 
 void
@@ -114,7 +111,7 @@ MySQL::Command::bindParamS(unsigned int n, const std::string_view & s)
 	binds[n].buffer_type = MYSQL_TYPE_STRING;
 	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, s.length());
-	s.copy(static_cast<char*>(binds[n].buffer), s.length(), 0);
+	s.copy(static_cast<char *>(binds[n].buffer), s.length(), 0);
 	binds[n].buffer_length = s.length();
 	binds[n].is_unsigned = false;
 }
@@ -124,7 +121,7 @@ MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 	binds[n].buffer_type = MYSQL_TYPE_DATETIME;
 	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(MYSQL_TIME));
-	MYSQL_TIME & ts = *static_cast<MYSQL_TIME*>(binds[n].buffer);
+	MYSQL_TIME & ts = *static_cast<MYSQL_TIME *>(binds[n].buffer);
 	ts.year = v.date().year();
 	ts.month = v.date().month();
 	ts.day = v.date().day();
@@ -140,7 +137,7 @@ MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duratio
 	binds[n].buffer_type = MYSQL_TYPE_TIME;
 	// NOLINTNEXTLINE(hicpp-no-malloc)
 	binds[n].buffer = realloc(binds[n].buffer, sizeof(MYSQL_TIME));
-	MYSQL_TIME & ts = *static_cast<MYSQL_TIME*>(binds[n].buffer);
+	MYSQL_TIME & ts = *static_cast<MYSQL_TIME *>(binds[n].buffer);
 	ts.year = 0;
 	ts.month = 0;
 	ts.day = 0;
@@ -169,5 +166,3 @@ MySQL::Command::bindParams()
 		}
 	}
 }
-
-
