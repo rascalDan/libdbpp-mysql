@@ -25,7 +25,6 @@ namespace MySQL {
 		void apply(DB::HandleField &) const override;
 
 		std::vector<char> value;
-		long unsigned int length;
 	};
 
 	class NullColumn : public ColumnBase {

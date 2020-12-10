@@ -13,7 +13,7 @@ MySQL::ColumnBase::isNull() const
 }
 
 MySQL::StringColumn::StringColumn(const char * name, unsigned int field, MYSQL_BIND * b, unsigned int len) :
-	ColumnBase(name, field), value(len), length(0)
+	ColumnBase(name, field), value(len)
 {
 	b->is_null = &is_null;
 	b->buffer_type = MYSQL_TYPE_STRING;
