@@ -154,9 +154,9 @@ namespace MySQL {
 		local_infile_read(void * obj, char * buf, unsigned int bufSize)
 		{
 			auto ctx = static_cast<LoadContext *>(obj);
-			if (ctx->loadBufLen - ctx->bufOff == 0) {
+			if (ctx->loadBufLen == ctx->bufOff) {
 				ctx->swapContext();
-				if (ctx->loadBufLen - ctx->bufOff <= 0) {
+				if (ctx->loadBufLen == ctx->bufOff) {
 					// Nothing to do or error
 					return ctx->bufOff;
 				}
