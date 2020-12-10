@@ -162,7 +162,6 @@ MySQL::Command::bindParams()
 	if (paramsNeedBinding) {
 		if (mysql_stmt_bind_param(stmt, &binds.front())) {
 			throw Error(stmt);
-			paramsNeedBinding = false;
 		}
 	}
 }
