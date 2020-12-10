@@ -9,15 +9,15 @@
 namespace MySQL {
 	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {
 	public:
-		ConnectionError(MYSQL *);
+		explicit ConnectionError(MYSQL *);
 	};
 
 	class LoadContext;
 
 	class Connection : public DB::Connection {
 	public:
-		Connection(const std::string & info);
-		~Connection();
+		explicit Connection(const std::string & info);
+		~Connection() override;
 
 		void beginTxInt() override;
 		void commitTxInt() override;
