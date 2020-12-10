@@ -210,6 +210,9 @@ MySQL::Connection::beginBulkUpload(const char * table, const char * extra)
 void
 MySQL::Connection::endBulkUpload(const char * msg)
 {
+	if (!ctx) {
+		throw std::logic_error("No bulk upload in progress");
+	}
 	ctx->loadBuf = nullptr;
 	ctx->loadBufLen = 0;
 	ctx->bufOff = msg ? -1 : 0;
@@ -228,6 +231,9 @@ MySQL::Connection::endBulkUpload(const char * msg)
 size_t
 MySQL::Connection::bulkUploadData(const char * data, size_t len) const
 {
+	if (!ctx) {
+		throw std::logic_error("No bulk upload in progress");
+	}
 	ctx->loadBuf = data;
 	ctx->loadBufLen = len;
 	ctx->bufOff = 0;
