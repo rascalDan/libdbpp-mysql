@@ -5,15 +5,15 @@
 #include <cstring>
 
 MySQL::Command::Command(const Connection * conn, const std::string & sql) :
-	DB::Command(sql), c(conn), stmt(mysql_stmt_init(&conn->conn)), paramsNeedBinding(false)
+	DB::Command(sql), c(conn), stmt(mysql_stmt_init(&conn->conn), &mysql_stmt_close), paramsNeedBinding(false)
 {
 	if (!stmt) {
 		throw Error(&conn->conn);
 	}
-	if (mysql_stmt_prepare(stmt, sql.c_str(), sql.length())) {
-		throw Error(stmt);
+	if (mysql_stmt_prepare(stmt.get(), sql.c_str(), sql.length())) {
+		throw Error(stmt.get());
 	}
-	binds.resize(mysql_stmt_param_count(stmt));
+	binds.resize(mysql_stmt_param_count(stmt.get()));
 	if (binds.size()) {
 		paramsNeedBinding = true;
 		for (auto & b : binds) {
@@ -29,7 +29,6 @@ MySQL::Command::~Command()
 		// NOLINTNEXTLINE(hicpp-no-malloc)
 		free(b.buffer);
 	}
-	mysql_stmt_close(stmt);
 }
 
 void *
@@ -160,8 +159,8 @@ void
 MySQL::Command::bindParams()
 {
 	if (paramsNeedBinding) {
-		if (mysql_stmt_bind_param(stmt, &binds.front())) {
-			throw Error(stmt);
+		if (mysql_stmt_bind_param(stmt.get(), &binds.front())) {
+			throw Error(stmt.get());
 		}
 	}
 }

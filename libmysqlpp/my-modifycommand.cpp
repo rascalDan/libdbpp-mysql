@@ -12,10 +12,10 @@ unsigned int
 MySQL::ModifyCommand::execute(bool anc)
 {
 	bindParams();
-	if (mysql_stmt_execute(stmt)) {
-		throw Error(stmt);
+	if (mysql_stmt_execute(stmt.get())) {
+		throw Error(stmt.get());
 	}
-	int rows = mysql_stmt_affected_rows(stmt);
+	int rows = mysql_stmt_affected_rows(stmt.get());
 	if (rows == 0 && !anc) {
 		throw DB::NoRowsAffected();
 	}

@@ -37,7 +37,7 @@ namespace MySQL {
 		void * realloc(void * buffer, size_t size);
 
 		const Connection * c;
-		MYSQL_STMT * stmt;
+		std::unique_ptr<MYSQL_STMT, decltype(&mysql_stmt_close)> stmt;
 		typedef std::vector<MYSQL_BIND> Binds;
 		Binds binds;
 		bool paramsNeedBinding;

@@ -14,11 +14,11 @@ MySQL::SelectCommand::execute()
 {
 	if (!prepared) {
 		bindParams();
-		fields.resize(mysql_stmt_field_count(stmt));
+		fields.resize(mysql_stmt_field_count(stmt.get()));
 		for (auto & b : fields) {
 			memset(&b, 0, sizeof(MYSQL_BIND));
 		}
-		MYSQL_RES * prepare_meta_result = mysql_stmt_result_metadata(stmt);
+		MYSQL_RES * prepare_meta_result = mysql_stmt_result_metadata(stmt.get());
 		MYSQL_FIELD * fieldDefs = mysql_fetch_fields(prepare_meta_result);
 		for (std::size_t i = 0; i < fields.size(); i += 1) {
 			switch (fieldDefs[i].type) {
@@ -65,17 +65,17 @@ MySQL::SelectCommand::execute()
 			}
 		}
 		mysql_free_result(prepare_meta_result);
-		if (mysql_stmt_bind_result(stmt, &fields.front())) {
-			throw Error(stmt);
+		if (mysql_stmt_bind_result(stmt.get(), &fields.front())) {
+			throw Error(stmt.get());
 		}
 		prepared = true;
 	}
 	if (!executed) {
-		if (mysql_stmt_execute(stmt)) {
-			throw Error(stmt);
+		if (mysql_stmt_execute(stmt.get())) {
+			throw Error(stmt.get());
 		}
-		if (mysql_stmt_store_result(stmt)) {
-			throw Error(stmt);
+		if (mysql_stmt_store_result(stmt.get())) {
+			throw Error(stmt.get());
 		}
 		executed = true;
 	}
@@ -85,13 +85,13 @@ bool
 MySQL::SelectCommand::fetch()
 {
 	execute();
-	switch (mysql_stmt_fetch(stmt)) {
+	switch (mysql_stmt_fetch(stmt.get())) {
 		case 0:
 			return true;
 		case MYSQL_NO_DATA:
 			executed = false;
 			return false;
 		default:
-			throw Error(stmt);
+			throw Error(stmt.get());
 	}
 }
