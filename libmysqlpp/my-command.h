@@ -38,7 +38,7 @@ namespace MySQL {
 
 		const Connection * c;
 		std::unique_ptr<MYSQL_STMT, decltype(&mysql_stmt_close)> stmt;
-		typedef std::vector<MYSQL_BIND> Binds;
+		using Binds = std::vector<MYSQL_BIND>;
 		Binds binds;
 		bool paramsNeedBinding;
 	};
