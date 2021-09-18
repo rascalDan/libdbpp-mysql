@@ -21,7 +21,7 @@ public:
 
 BOOST_GLOBAL_FIXTURE(StandardMockDatabase);
 
-BOOST_FIXTURE_TEST_SUITE(Core, DB::TestCore);
+BOOST_FIXTURE_TEST_SUITE(Core, DB::TestCore)
 
 BOOST_AUTO_TEST_CASE(transactions)
 {
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(bulkload)
 	}
 	std::array<char, BUFSIZ> buf {};
 	for (std::streamsize r; (r = in.readsome(buf.data(), buf.size())) > 0;) {
-		ro->bulkUploadData(buf.data(), r);
+		ro->bulkUploadData(buf.data(), static_cast<size_t>(r));
 	}
 	ro->endBulkUpload(nullptr);
 	assertScalarValueHelper(*count, 800);
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(insertId)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("mysqlmock");
 	auto ins = ro->modify("INSERT INTO inserts(num) VALUES(?)");
-	int prevId = 0;
+	int64_t prevId = 0;
 	for (int n : {4, 40, -4}) {
 		ins->bindParamI(0, n);
 		ins->execute();
@@ -150,4 +150,4 @@ BOOST_AUTO_TEST_CASE(errors)
 	BOOST_REQUIRE_THROW((void)DB::ConnectionFactory::createNew("mysql", "server=nohost"), DB::ConnectionError);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()

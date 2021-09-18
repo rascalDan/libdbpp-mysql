@@ -89,7 +89,9 @@ namespace MySQL {
 			h.null();
 		}
 		else {
-			h.timestamp(boost::posix_time::ptime(boost::gregorian::date(value.year, value.month, value.day),
+			h.timestamp(boost::posix_time::ptime(
+					boost::gregorian::date(static_cast<short unsigned int>(value.year),
+							static_cast<short unsigned int>(value.month), static_cast<short unsigned int>(value.day)),
 					boost::posix_time::time_duration(value.hour, value.minute, value.second)
 							+ boost::posix_time::microseconds(value.second_part)));
 		}

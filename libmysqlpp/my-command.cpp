@@ -124,10 +124,10 @@ MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 	ts.year = v.date().year();
 	ts.month = v.date().month();
 	ts.day = v.date().day();
-	ts.hour = v.time_of_day().hours();
-	ts.minute = v.time_of_day().minutes();
-	ts.second = v.time_of_day().seconds();
-	ts.second_part = v.time_of_day().total_microseconds() % 1000000;
+	ts.hour = static_cast<unsigned int>(v.time_of_day().hours());
+	ts.minute = static_cast<unsigned int>(v.time_of_day().minutes());
+	ts.second = static_cast<unsigned int>(v.time_of_day().seconds());
+	ts.second_part = static_cast<long unsigned int>(v.time_of_day().total_microseconds() % 1000000U);
 	ts.neg = false;
 }
 void
@@ -140,10 +140,10 @@ MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duratio
 	ts.year = 0;
 	ts.month = 0;
 	ts.day = 0;
-	ts.hour = v.hours();
-	ts.minute = v.minutes();
-	ts.second = v.seconds();
-	ts.second_part = v.total_microseconds() % 1000000;
+	ts.hour = static_cast<unsigned int>(v.hours());
+	ts.minute = static_cast<unsigned int>(v.minutes());
+	ts.second = static_cast<unsigned int>(v.seconds());
+	ts.second_part = static_cast<long unsigned int>(v.total_microseconds() % 1000000U);
 	ts.neg = (v.is_negative() ? 1 : 0);
 }
 void

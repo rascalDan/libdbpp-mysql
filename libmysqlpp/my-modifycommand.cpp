@@ -15,9 +15,9 @@ MySQL::ModifyCommand::execute(bool anc)
 	if (mysql_stmt_execute(stmt.get())) {
 		throw Error(stmt.get());
 	}
-	int rows = mysql_stmt_affected_rows(stmt.get());
+	auto rows = mysql_stmt_affected_rows(stmt.get());
 	if (rows == 0 && !anc) {
 		throw DB::NoRowsAffected();
 	}
-	return rows;
+	return static_cast<unsigned int>(rows);
 }

@@ -2,7 +2,10 @@
 #define MY_COMMAND_H
 
 #include <command.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #include <mysql.h>
+#pragma GCC diagnostic pop
 #include <vector>
 
 namespace MySQL {

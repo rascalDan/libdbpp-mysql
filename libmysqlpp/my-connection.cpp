@@ -8,22 +8,18 @@
 #include <runtimeContext.h>
 #include <ucontext.h>
 
-NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory);
+NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory)
 
 MySQL::ConnectionError::ConnectionError(MYSQL * m) : MySQL::Error(m) { }
 
 class Opts {
 public:
-	Opts()
-	{
-		port = 3306;
-	}
 	using OptString = std::optional<std::string>;
 	OptString server;
 	OptString user;
 	OptString password;
 	OptString database;
-	unsigned int port;
+	unsigned int port {3306};
 	OptString unix_socket;
 	OptString options;
 };
@@ -158,13 +154,13 @@ namespace MySQL {
 				ctx->swapContext();
 				if (ctx->loadBufLen == ctx->bufOff) {
 					// Nothing to do or error
-					return ctx->bufOff;
+					return static_cast<int>(ctx->bufOff);
 				}
 			}
 			auto copy = std::min<size_t>(ctx->loadBufLen - ctx->bufOff, bufSize);
 			memcpy(buf, ctx->loadBuf + ctx->bufOff, copy);
 			ctx->bufOff += copy;
-			return copy;
+			return static_cast<int>(copy);
 		}
 
 		static void
@@ -215,7 +211,7 @@ MySQL::Connection::endBulkUpload(const char * msg)
 	}
 	ctx->loadBuf = nullptr;
 	ctx->loadBufLen = 0;
-	ctx->bufOff = msg ? -1 : 0;
+	ctx->bufOff = msg ? static_cast<size_t>(-1) : 0;
 	// switch context with empty buffer fires finished
 	ctx->swapContext();
 	// Check result
@@ -245,5 +241,5 @@ MySQL::Connection::bulkUploadData(const char * data, size_t len) const
 int64_t
 MySQL::Connection::insertId()
 {
-	return mysql_insert_id(&conn);
+	return static_cast<int64_t>(mysql_insert_id(&conn));
 }

@@ -4,7 +4,10 @@
 #include "my-error.h"
 #include <connection.h>
 #include <memory>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #include <mysql.h>
+#pragma GCC diagnostic pop
 
 namespace MySQL {
 	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {

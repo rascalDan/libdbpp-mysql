@@ -2,7 +2,7 @@
 #include "my-connection.h"
 #include <compileTimeFormatter.h>
 
-NAMEDFACTORY("mysql", MySQL::Mock, DB::MockDatabaseFactory);
+NAMEDFACTORY("mysql", MySQL::Mock, DB::MockDatabaseFactory)
 
 namespace MySQL {
 

@@ -2,7 +2,10 @@
 #define MY_COLUMN_H
 
 #include <column.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #include <mysql.h>
+#pragma GCC diagnostic pop
 
 namespace MySQL {
 	class SelectCommand;

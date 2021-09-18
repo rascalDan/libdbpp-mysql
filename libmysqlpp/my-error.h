@@ -3,7 +3,10 @@
 
 #include <error.h>
 #include <exception.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #include <mysql.h>
+#pragma GCC diagnostic pop
 
 namespace MySQL {
 	class Error : public AdHoc::Exception<DB::Error> {
