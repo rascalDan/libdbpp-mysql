@@ -6,8 +6,6 @@
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #include <mysql.h>
 #pragma GCC diagnostic pop
-#include <field_types.h>
-#include <mysql_time.h>
 #include <vector>
 
 namespace MySQL {

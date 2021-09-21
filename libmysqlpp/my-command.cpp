@@ -5,20 +5,14 @@
 #include <boost/date_time/date.hpp>
 #include <boost/date_time/gregorian_calendar.hpp>
 #include <boost/date_time/time.hpp>
-#include <boost/date_time/time_system_counted.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <cstdlib>
 #include <cstring>
-#include <field_types.h>
 #include <mysql.h>
-#include <mysql_time.h>
 #include <type_traits>
 
 namespace Glib {
 	class ustring;
-}
-namespace boost::posix_time {
-	class time_duration;
 }
 
 MySQL::Command::Command(const Connection * conn, const std::string & sql) :

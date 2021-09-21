@@ -6,10 +6,8 @@
 #include "selectcommand.h"
 #include <cstdint>
 #include <cstring>
-#include <field_types.h>
 #include <memory>
 #include <mysql.h>
-#include <mysql_time.h>
 #include <vector>
 
 MySQL::SelectCommand::SelectCommand(const Connection * conn, const std::string & sql) :
