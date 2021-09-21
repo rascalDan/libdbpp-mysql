@@ -1,12 +1,19 @@
 #include "my-connection.h"
+#include "connection.h"
 #include "my-error.h"
 #include "my-modifycommand.h"
 #include "my-selectcommand.h"
+#include <algorithm>
 #include <compileTimeFormatter.h>
+#include <cstring>
+#include <exception.h>
+#include <factory.h>
+#include <map>
+#include <mysql.h>
 #include <nvpParse.h>
 #include <optional>
 #include <runtimeContext.h>
-#include <ucontext.h>
+#include <stdexcept>
 
 NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory)
 

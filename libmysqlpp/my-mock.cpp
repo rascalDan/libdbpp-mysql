@@ -1,6 +1,12 @@
 #include "my-mock.h"
+#include "connection_fwd.h"
+#include "mockDatabase.h"
 #include "my-connection.h"
 #include <compileTimeFormatter.h>
+#include <factory.h>
+#include <memory>
+#include <string>
+#include <vector>
 
 NAMEDFACTORY("mysql", MySQL::Mock, DB::MockDatabaseFactory)
 

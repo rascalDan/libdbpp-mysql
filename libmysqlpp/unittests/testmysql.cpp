@@ -1,16 +1,30 @@
 #define BOOST_TEST_MODULE TestMySQL
 #include <boost/test/unit_test.hpp>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <column.h>
+#include "mockDatabase.h"
+#include <array>
+#include <boost/date_time/posix_time/conversion.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
 #include <connection.h>
+#include <cstdint>
+#include <cstdio>
 #include <definedDirs.h>
+#include <factory.impl.h>
+#include <filesystem>
 #include <fstream>
+#include <initializer_list>
+#include <memory>
 #include <modifycommand.h>
-#include <my-error.h>
 #include <my-mock.h>
 #include <selectcommand.h>
+#include <stdexcept>
+#include <string_view>
 #include <testCore.h>
+
+namespace DB {
+	class Error;
+}
 
 class StandardMockDatabase : public DB::PluginMock<MySQL::Mock> {
 public:

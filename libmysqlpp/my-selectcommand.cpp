@@ -1,8 +1,16 @@
 #include "my-selectcommand.h"
+#include "command.h"
 #include "my-column.h"
-#include "my-connection.h"
+#include "my-command.h"
 #include "my-error.h"
+#include "selectcommand.h"
+#include <cstdint>
 #include <cstring>
+#include <field_types.h>
+#include <memory>
+#include <mysql.h>
+#include <mysql_time.h>
+#include <vector>
 
 MySQL::SelectCommand::SelectCommand(const Connection * conn, const std::string & sql) :
 	DB::Command(sql), DB::SelectCommand(sql), MySQL::Command(conn, sql), prepared(false), executed(false)

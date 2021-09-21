@@ -3,6 +3,7 @@
 
 #include "my-command.h"
 #include <modifycommand.h>
+#include <string>
 
 namespace MySQL {
 	class Connection;

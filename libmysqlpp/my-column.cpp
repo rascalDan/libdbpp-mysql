@@ -1,8 +1,14 @@
 #include "my-column.h"
-#include "my-error.h"
-#include "my-selectcommand.h"
-#include <boost/date_time/gregorian/gregorian_types.hpp>
-#include <cstring>
+#include "column.h"
+#include <boost/date_time/gregorian/greg_date.hpp>
+#include <boost/date_time/posix_time/posix_time_duration.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/time_duration.hpp>
+#include <cstdint>
+#include <field_types.h>
+#include <mysql.h>
+#include <mysql_time.h>
 
 MySQL::ColumnBase::ColumnBase(const char * name, unsigned int i) : DB::Column(name, i), is_null(false), length(0) { }
 

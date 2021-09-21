@@ -1,5 +1,5 @@
 #include "my-error.h"
-#include <cstring>
+#include <mysql.h>
 
 MySQL::Error::Error(MYSQL * m) : msg(mysql_error(m)) { }
 

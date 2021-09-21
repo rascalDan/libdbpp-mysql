@@ -6,7 +6,18 @@
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #include <mysql.h>
 #pragma GCC diagnostic pop
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <cstddef>
+#include <glibmm/ustring.h>
+#include <memory>
+#include <string>
+#include <string_view>
 #include <vector>
+
+namespace boost::posix_time {
+	class time_duration;
+}
 
 namespace MySQL {
 	class Connection;

@@ -8,6 +8,10 @@
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #include <mysql.h>
 #pragma GCC diagnostic pop
+#include "command_fwd.h"
+#include <cstddef>
+#include <cstdint>
+#include <string>
 
 namespace MySQL {
 	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {

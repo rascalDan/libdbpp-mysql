@@ -3,10 +3,10 @@
 
 #include "my-command.h"
 #include <selectcommand.h>
+#include <string>
 
 namespace MySQL {
 	class Connection;
-	class ColumnBase;
 	class SelectCommand : public DB::SelectCommand, public Command {
 	public:
 		SelectCommand(const Connection *, const std::string & sql);
