@@ -17,6 +17,7 @@
 
 NAMEDFACTORY("mysql", MySQL::Connection, DB::ConnectionFactory)
 
+// NOLINTNEXTLINE(bugprone-throw-keyword-missing)
 MySQL::ConnectionError::ConnectionError(MYSQL * m) : MySQL::Error(m) { }
 
 class Opts {
