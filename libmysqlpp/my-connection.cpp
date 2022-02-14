@@ -113,13 +113,13 @@ MySQL::Connection::rollbackTxInt()
 DB::BulkDeleteStyle
 MySQL::Connection::bulkDeleteStyle() const
 {
-	return DB::BulkDeleteUsingUsingAlias;
+	return DB::BulkDeleteStyle::UsingUsingAlias;
 }
 
 DB::BulkUpdateStyle
 MySQL::Connection::bulkUpdateStyle() const
 {
-	return DB::BulkUpdateUsingJoin;
+	return DB::BulkUpdateStyle::UsingJoin;
 }
 
 void
