@@ -116,7 +116,7 @@ MySQL::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 }
 
 void
-MySQL::Command::bindParamS(unsigned int n, const std::string_view & s)
+MySQL::Command::bindParamS(unsigned int n, const std::string_view s)
 {
 	binds[n].buffer_type = MYSQL_TYPE_STRING;
 	// NOLINTNEXTLINE(hicpp-no-malloc)
@@ -126,7 +126,7 @@ MySQL::Command::bindParamS(unsigned int n, const std::string_view & s)
 	binds[n].is_unsigned = false;
 }
 void
-MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
+MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_DATETIME;
 	// NOLINTNEXTLINE(hicpp-no-malloc)
@@ -142,7 +142,7 @@ MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 	ts.neg = false;
 }
 void
-MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration & v)
+MySQL::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration v)
 {
 	binds[n].buffer_type = MYSQL_TYPE_TIME;
 	// NOLINTNEXTLINE(hicpp-no-malloc)
