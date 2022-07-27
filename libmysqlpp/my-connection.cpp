@@ -145,7 +145,7 @@ MySQL::Connection::modify(const std::string & sql, const DB::CommandOptionsCPtr 
 namespace MySQL {
 	class LoadContext : public AdHoc::System::RuntimeContext {
 	public:
-		explicit LoadContext(MYSQL * c) : loadBuf(nullptr), loadBufLen(0), bufOff(0), conn(c), loadReturn(0) { }
+		explicit LoadContext(MYSQL * c) : conn(c) { }
 
 		static int
 		local_infile_init(void ** ptr, const char *, void * ctx)
@@ -188,11 +188,11 @@ namespace MySQL {
 			loadReturn = mysql_read_query_result(conn);
 		}
 
-		const char * loadBuf;
-		size_t loadBufLen;
-		size_t bufOff;
 		MYSQL * conn;
-		int loadReturn;
+		const char * loadBuf {};
+		size_t loadBufLen {};
+		size_t bufOff {};
+		int loadReturn {};
 	};
 }
 
