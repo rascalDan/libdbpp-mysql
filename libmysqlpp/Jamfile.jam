@@ -8,8 +8,7 @@ lib boost_date_time ;
 pkg-config.import glibmm : : <name>glibmm-2.68 ;
 pkg-config.import mysqlclient ;
 
-project
-  : requirements
+project libdbpp-mysql : requirements
 			<cxxstd>20
 			<visibility>hidden
       <linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
