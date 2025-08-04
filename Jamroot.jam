@@ -1,7 +1,6 @@
 import os ;
 import feature : feature ;
 
-using gcc : : [ os.environ CXX ] ;
 using pkg-config ;
 
 variant coverage : debug ;
